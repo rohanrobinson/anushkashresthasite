@@ -1,0 +1,10 @@
+{
+  "description": "Showcases Anushka Shrestha's personal insights, fashion style, and home life through a clean, organized three-section website for easy browsing.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
