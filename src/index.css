@@ -1,20 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,600&family=Outfit:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,600&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Devanagari:wght@300;400;500;600&display=swap');
 @import 'tailwindcss';
 
 @theme {
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Outfit', system-ui, sans-serif;
+  /* Fraunces and Outfit carry no Devanagari, so मूल घर would fall back to
+     whatever the OS happens to have. Pair an explicit serif Devanagari with
+     Fraunces so the script is a deliberate choice, not an accident. */
+  --font-devanagari: 'Noto Serif Devanagari', 'Kohinoor Devanagari', serif;
 
-  --color-cream: #f5f0e8;
-  --color-warm-white: #faf7f2;
-  --color-saffron: #e8844a;
-  --color-saffron-light: #f2a87a;
+  /* Grounds. These are no longer five solid blocks: they are the stops on
+     one pour that runs the height of the document, from a fired red at the
+     top down through two browner steps into the kiln-dark. Sections sit
+     transparent on top of it, so the colour changes as you scroll rather
+     than at the section edges, and the telia itta in the seams is laid from
+     faces across the same range. */
+  /* The floor of the pour, and the chrome at both ends. */
+  --color-earth: #33201a;
+  /* The head of the pour, behind the hero footage. */
+  --color-ember: #a84332;
+  /* --- Uniform ground -----------------------------------------------------
+     The mood board and Mool Ghar were two graded steps between the hero and
+     2 cents; they now hold the 2 cents colour so those three sections read as
+     one. The pour therefore has to settle by the time the mood board starts,
+     which is why the crimson stop in `body` moved from 26% to 13% (the first
+     brick seam ends at 12.9% of the document).
+
+     To restore the graded pour, put back all three of:
+       --color-crimson: #9b4f35;
+       --color-brick:   #8a5038;
+       and the crimson stop in `body` from 13% to 26%.
+     -------------------------------------------------------------------- */
+  --color-crimson: #4a2c24;
+  --color-brick: #4a2c24;
+  --color-oxblood: #4a2c24;
+
+  /* Ink on the red grounds. The three upper grounds are mid-tone, so the
+     secondary inks had to come up with them: at the old values body copy sat
+     at 3.6:1 and saffron at 2.8:1. These are the most saturated versions that
+     still clear 4.5:1 on the lightest ground. */
+  --color-cream: #f8ece0;
+  --color-cream-dim: #ffdac2;
+  --color-border: rgba(248, 236, 224, 0.28);
+
+  /* Accents. */
+  --color-saffron: #ffd9bd;
+  --color-marigold: #ffdea8;
   --color-terracotta: #c45c2e;
-  --color-charcoal: #1c1916;
-  --color-ink: #2e2822;
-  --color-muted-ink: #6b5e52;
-  --color-border: #d9cfc3;
   --color-teal: #2d5a5a;
+
+  /* Paper — the popup stays a light sticker on the dark site. */
+  --color-paper: #f8ece0;
+  --color-paper-ink: #3d1412;
+  --color-paper-dim: #7d5a4c;
 }
 
 *, *::before, *::after {
@@ -23,15 +61,31 @@
 
 html {
   scroll-behavior: smooth;
+  /* Clears the fixed header so anchored sections are not hidden under it. */
+  scroll-padding-top: 5.25rem;
 }
 
 body {
   font-family: var(--font-body);
-  background-color: var(--color-warm-white);
-  color: var(--color-ink);
+  background-color: var(--color-earth);
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-ember) 0%,
+    var(--color-crimson) 13%,
+    var(--color-brick) 48%,
+    var(--color-oxblood) 76%,
+    var(--color-earth) 100%
+  );
+  background-repeat: no-repeat;
+  color: var(--color-cream);
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Devanagari runs pick up the paired face wherever they appear. */
+:lang(ne), :lang(hi), .devanagari {
+  font-family: var(--font-devanagari);
 }
 
 ::-webkit-scrollbar {
@@ -41,13 +95,13 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-saffron);
   border-radius: 2px;
 }
 
 ::selection {
   background: var(--color-saffron);
-  color: var(--color-warm-white);
+  color: var(--color-earth);
 }
 
 @keyframes popup-fade {
@@ -63,4 +117,297 @@ body {
 @keyframes popup-wiggle {
   0%, 100% { transform: rotate(8deg); }
   50% { transform: rotate(-4deg); }
+}
+
+/* The seam between the hero and the mood board, laid as telia itta — the
+   oil-fired facing brick of the Kathmandu Valley. Long flat faces at roughly
+   4.5:1, hairline joints instead of fat Western mortar, and a polish on every
+   course. No two faces are the same colour: each one is drawn off the line
+   between the hero's ember and the mood board's crimson, so the wall is where
+   the page's brown and red actually meet. */
+.brick-seam {
+  position: relative;
+  height: clamp(8.5rem, 14vw, 14rem);
+  background: transparent;
+  overflow: hidden;
+}
+.brick-seam::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* Two layers on the same 20px course: the gradient lays the oil sheen along
+   the top of each brick and drops the joint into shadow, the SVG lays the
+   faces. `fixed` is what buys the parallax — the courses stay put while the
+   band scrolls over them. */
+.brick-seam::before {
+  background-color: rgba(36, 16, 9, 0.7);
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(30, 13, 7, 0.55) 0 1px,
+      rgba(255, 214, 176, 0.2) 1px 3px,
+      rgba(255, 190, 150, 0.07) 3px 7px,
+      transparent 7px 12px,
+      rgba(48, 20, 12, 0.12) 12px 16px,
+      rgba(30, 13, 7, 0.4) 16px 19px,
+      rgba(30, 13, 7, 0.55) 19px 20px
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='328' height='120'%3E%3Crect x='0' y='1' width='80' height='18' fill='%235d3f2f'/%3E%3Crect x='82' y='1' width='80' height='18' fill='%23764934'/%3E%3Crect x='164' y='1' width='80' height='18' fill='%236a402e'/%3E%3Crect x='246' y='1' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='-41' y='21' width='80' height='18' fill='%23814433'/%3E%3Crect x='41' y='21' width='80' height='18' fill='%23814433'/%3E%3Crect x='123' y='21' width='80' height='18' fill='%23684734'/%3E%3Crect x='205' y='21' width='80' height='18' fill='%23533729'/%3E%3Crect x='287' y='21' width='80' height='18' fill='%23814433'/%3E%3Crect x='0' y='41' width='80' height='18' fill='%23834a39'/%3E%3Crect x='82' y='41' width='80' height='18' fill='%23533729'/%3E%3Crect x='164' y='41' width='80' height='18' fill='%23814433'/%3E%3Crect x='246' y='41' width='80' height='18' fill='%235d3f2f'/%3E%3Crect x='-41' y='61' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='41' y='61' width='80' height='18' fill='%23764934'/%3E%3Crect x='123' y='61' width='80' height='18' fill='%23814433'/%3E%3Crect x='205' y='61' width='80' height='18' fill='%23764934'/%3E%3Crect x='287' y='61' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='0' y='81' width='80' height='18' fill='%236a402e'/%3E%3Crect x='82' y='81' width='80' height='18' fill='%23684734'/%3E%3Crect x='164' y='81' width='80' height='18' fill='%236a402e'/%3E%3Crect x='246' y='81' width='80' height='18' fill='%23814433'/%3E%3Crect x='-41' y='101' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='41' y='101' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='123' y='101' width='80' height='18' fill='%235d3f2f'/%3E%3Crect x='205' y='101' width='80' height='18' fill='%23814433'/%3E%3Crect x='287' y='101' width='80' height='18' fill='%237d4e3d'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+  /* Feathers the courses into the pour at both ends. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .brick-seam::before { background-attachment: scroll; }
+}
+
+/* Mool Ghar cards run photo beside text. The photo cell carries no aspect
+   ratio of its own — it fills whatever height the text column sets, so there
+   is no dead space under it and a portrait frame stays nearly whole. */
+.ghar-card {
+  display: grid;
+  grid-template-columns: 0.8fr 1.7fr;
+  height: 20.125rem;
+}
+/* The body is the only thing that varies enough to break that height. */
+.ghar-card p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+/* Narrow enough and that column would be a stripe, so stack it instead. */
+@media (max-width: 720px) {
+  .ghar-card {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .ghar-card > :first-child {
+    max-height: 15.5rem;
+  }
+}
+
+/* Mood board: a fixed mosaic rather than a masonry. Masonry left ragged gaps
+   at the foot of each column; here every cell is filled and the photos are
+   cropped to fit. Row heights still vary, so the long/short rhythm survives.
+   10 photos, 3 columns: items 4 and 10 run double-width, which makes
+   3 + 3 + 3 + 3 = four complete rows with nothing left over. */
+.mood-mosaic {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows:
+    clamp(200px, 22vw, 330px)
+    clamp(170px, 18vw, 250px)
+    clamp(215px, 24vw, 355px)
+    clamp(185px, 20vw, 275px);
+  gap: 1.75rem;
+}
+.mood-mosaic > *:nth-child(4),
+.mood-mosaic > *:nth-child(10) {
+  grid-column: span 2;
+}
+
+/* Two columns: 10 photos make five clean rows, so no item needs to span. */
+@media (max-width: 1000px) {
+  .mood-mosaic {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: clamp(190px, 30vw, 300px);
+  }
+  .mood-mosaic > *:nth-child(4),
+  .mood-mosaic > *:nth-child(10) {
+    grid-column: span 1;
+  }
+}
+@media (max-width: 620px) {
+  .mood-mosaic {
+    grid-template-columns: 1fr;
+    grid-auto-rows: clamp(240px, 62vw, 340px);
+  }
+}
+
+/* Mood board hover — a candle guttering behind the photo. */
+@keyframes ember-flicker {
+  0%, 100% { box-shadow: 0 0 0 1px var(--color-marigold), 0 18px 46px -12px rgba(240, 120, 40, 0.75); }
+  38%      { box-shadow: 0 0 0 1px var(--color-marigold), 0 14px 34px -12px rgba(240, 120, 40, 0.5); }
+  62%      { box-shadow: 0 0 0 1px var(--color-marigold), 0 22px 56px -12px rgba(247, 191, 99, 0.85); }
+}
+.mood-tile {
+  transition: transform 0.35s ease, filter 0.35s ease, box-shadow 0.35s ease;
+}
+.mood-tile img {
+  transition: filter 0.45s ease, transform 0.6s ease;
+}
+.mood-tile.is-lit {
+  animation: ember-flicker 2.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mood-tile, .mood-tile img { transition: none; }
+  .mood-tile.is-lit { animation: none; box-shadow: 0 0 0 1px var(--color-marigold); }
+}
+
+/* Mood board credits. They sit opposite the caption and only surface on
+   hover, so a tile stays a photograph until you point at it. Keyboard users
+   get them through :focus-within, since the chips can be links. */
+.mood-credits,
+.mood-credit {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.mood-tile:focus-within .mood-credits,
+.mood-tile:focus-within .mood-credit {
+  opacity: 1;
+  transform: none;
+}
+.mood-credit a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+.mood-credit a:hover,
+.mood-credit a:focus-visible {
+  border-bottom-color: var(--color-marigold);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mood-credits,
+  .mood-credit {
+    transition: none;
+  }
+}
+
+/* Mood board captions fade up only while a tile is hovered. */
+.mood-caption {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mood-caption { transition: none; }
+}
+
+/* The hero CTA reads as a second caption rather than a button: same face,
+   size, tracking and colour as the place label in the corner beside it, with
+   no chrome of its own. It sits still until you touch it, then rocks. */
+@keyframes cta-rock {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+.hero-cta {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 4rem;
+  z-index: 2;
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+  text-shadow: 0 1px 6px rgba(45, 10, 6, 0.85);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.18s ease;
+}
+.hero-cta:hover,
+.hero-cta:focus-visible {
+  color: var(--color-marigold);
+  animation: cta-rock 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta {
+    transition: none;
+  }
+  .hero-cta:hover,
+  .hero-cta:focus-visible {
+    animation: none;
+  }
+}
+
+/* The hero footage dissolves into the page instead of being painted over with
+   a colour that has to match it. The ground behind the text column is the
+   document-length pour, so any fixed colour drifts out of step by the time it
+   reaches the hero and leaves a hard line down the join. Masking lets whatever
+   the pour happens to be there show through instead — two nested masks rather
+   than one composited pair, which keeps it working without mask-composite.
+   Outer fades the foot of the clip, inner cuts the diagonal under the
+   headline. */
+.hero-media,
+.hero-media-inner {
+  position: absolute;
+  inset: 0;
+}
+.hero-media {
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.5) 12%, #000 32%);
+  mask-image: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.5) 12%, #000 32%);
+}
+.hero-media-inner {
+  -webkit-mask-image: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 12%,
+    rgba(0, 0, 0, 0.12) 22%,
+    rgba(0, 0, 0, 0.52) 34%,
+    rgba(0, 0, 0, 0.86) 47%,
+    #000 58%
+  );
+  mask-image: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 12%,
+    rgba(0, 0, 0, 0.12) 22%,
+    rgba(0, 0, 0, 0.52) 34%,
+    rgba(0, 0, 0, 0.86) 47%,
+    #000 58%
+  );
+}
+
+/* Post head. */
+.post-head {
+  margin-top: 2.5rem;
+}
+
+/* Prose rows: the heading sits out in the left margin and the text runs beside
+   it, so the page uses its width without stretching the measure past reading
+   length. */
+.post-row {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 40rem);
+  gap: 3.5rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .post-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* Justified prose with hyphenation on, because justifying without it opens
+   rivers at this measure. First paragraph of each block sits flush, every one
+   after it takes the indent. */
+.post-prose p {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+.post-prose p + p {
+  text-indent: 1.75rem;
+}
+
+/* A post's own mood board: a short strip under the reading column, not the
+   full mosaic. Two up on a phone, five across once there is room. */
+.post-mosaic {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: clamp(120px, 12vw, 180px);
+  gap: 0.75rem;
+}
+@media (max-width: 720px) {
+  .post-mosaic {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: clamp(140px, 34vw, 200px);
+  }
 }
