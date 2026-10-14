@@ -14,3 +14,6 @@ logs/
 
 # macOS
 .DS_Store
+
+# Source footage, too large for GitHub. The site uses the trimmed painting.mp4.
+src/assets/hero/painting.mov

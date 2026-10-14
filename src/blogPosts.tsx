@@ -1,17 +1,51 @@
 import type { ReactNode } from "react";
 
 import gharMoolGhar from "./assets/ghar/mool-ghar-diyo.jpg";
-import gharPujaThali from "./assets/ghar/puja-thali-rose.jpg";
 import gharPatanAerial from "./assets/ghar/mangal-bazar-patan.jpg";
 import moodPujaMarigold from "./assets/mood/02-puja-marigold.jpg";
-import moodNewarTattoo from "./assets/mood/01-newar-tattoo.jpg";
 import gharDashain from "./assets/ghar/dashain-tika-dog.jpg";
 import gharGosaikunda from "./assets/ghar/rasuwa-gosaikunda.jpg";
 import gharTrekking from "./assets/ghar/trekking-pass.jpg";
+import gharPikhaLakhu from "./assets/ghar/pikha-lakhu-puja.jpg";
+import gharChowk from "./assets/ghar/chowk-temple-square.jpg";
+import gharHimalHome from "./assets/ghar/himal-home-diyo.jpg";
+import gharIhi from "./assets/ghar/ihi-with-baba.jpg";
+import gharBahra from "./assets/ghar/bahra-with-baba.jpg";
+import musicRosePuja from "./assets/ghar/music-rose-puja.jpg";
+import gharFacade from "./assets/ghar/mool-ghar-facade.jpg";
+import gharPujaThali from "./assets/ghar/puja-thali-rose.jpg";
+import moodNewarTattoo from "./assets/mood/01-newar-tattoo.jpg";
+import lakeWater from "./assets/hero/water.jpg";
+import basecamp from "./assets/footer-media/basecamp-2021.jpg";
+import moolGharMood01 from "./assets/ghar/MG/mg-01.jpg";
+import moolGharMood02 from "./assets/ghar/MG/mg-02.jpg";
+import moolGharMood03 from "./assets/ghar/MG/mg-03.jpg";
+import moolGharMood04 from "./assets/ghar/MG/mg-04.jpg";
+import moolGharMood05 from "./assets/ghar/MG/mg-05.jpg";
+import moolGharMood06 from "./assets/ghar/MG/mg-06.jpg";
+import moolGharMood07 from "./assets/ghar/MG/mg-07.jpg";
+import moolGharMood08 from "./assets/ghar/MG/mg-08.jpg";
+import moolGharMood09 from "./assets/ghar/MG/mg-09.jpg";
+import moolGharMood10 from "./assets/ghar/MG/mg-10.jpg";
+import moolGharMood11 from "./assets/ghar/MG/mg-11.jpg";
+import moolGharMood12 from "./assets/ghar/MG/mg-12.jpg";
+import moolGharMood13 from "./assets/ghar/MG/mg-13.jpg";
+import moolGharMood14 from "./assets/ghar/MG/mg-14.jpg";
+import moolGharMood15 from "./assets/ghar/MG/mg-15.jpg";
+import moodLinenAnklets from "./assets/mood/13-linen-anklets.jpg";
 
 export type BlogSection = {
   heading: ReactNode;
   paragraphs: ReactNode[];
+  /* Optional photo for the section. It fills the section's band behind the
+     text, so `position` is the CSS background-position that keeps the part
+     that matters (usually faces) in frame when the band is wide and short. */
+  image?: {
+    src: string;
+    alt: string;
+    caption?: string;
+    position?: string;
+  };
 };
 
 export type BlogPost = {
@@ -23,10 +57,16 @@ export type BlogPost = {
   /* Counted at roughly 220 words a minute, the rate people actually read a
      screen at rather than the 300 a print estimate assumes. */
   readTime: string;
-  /* The record to put on while you read. `spotify` is the track id the embed
-     player is built from. */
+  /* The record to put on while you read. `youtube` is the video id the "play"
+     link points at. Keep `note` short — title, artist and note share one line
+     on the page. */
   music: {
-    spotify: string;
+    youtube: string;
+    /* Optional photo behind the listen card, under a dark wash. */
+    backdrop?: string;
+    /* Leave the artist out of the visible line (it stays in the link label
+       for screen readers). */
+    hideArtist?: boolean;
     title: string;
     artist: string;
     note: string;
@@ -34,6 +74,15 @@ export type BlogPost = {
   intro: ReactNode[];
   sections: BlogSection[];
   outro: ReactNode[];
+  /* "strip" (the default) crops every tile to one short row; "square" crops
+     every photo to a square in an even grid, for a bigger board of mixed
+     shapes. */
+  moodBoardLayout?: "strip" | "square";
+  /* Heading over the board; falls back to a generic one. */
+  moodBoardTitle?: string;
+  /* Columns for the "square" board on a wider screen (5 by default); pick
+     one that divides the photo count so the grid closes evenly. */
+  moodBoardColumns?: number;
   moodBoard: {
     image: string;
     alt: string;
@@ -92,10 +141,12 @@ const MOOL_GHAR: BlogPost = {
   date: "Jul 30, 2026",
   readTime: "4 min read",
   music: {
-    spotify: "1CDZekYBi52KRJ8WoBlvXw",
-    title: "Ganashpati",
+    youtube: "0fYbkFKJmO0",
+    backdrop: musicRosePuja,
+    title: "“Ganashpati”",
     artist: "Kuma Sagar",
-    note: "press play. it is the correct soundtrack for a house like this.",
+    hideArtist: true,
+    note: "The right soundtrack for Mool Ghar.",
   },
   intro: [
     <>
@@ -122,6 +173,12 @@ const MOOL_GHAR: BlogPost = {
           )}
         </>
       ),
+      image: {
+        src: gharPikhaLakhu,
+        alt: "A puja laid out on the floor: a brass deity, marigolds, rice and a copper plate with a banana and an oil lamp",
+        caption: "what gets handed over at the door",
+        position: "center 40%",
+      },
       paragraphs: [
         <>
           Right at the threshold of the main door sits a small mandala of stone
@@ -134,19 +191,27 @@ const MOOL_GHAR: BlogPost = {
           line between the family's inside and everybody else's outside. It is
           worshipped every morning by the matriarch of the house, and it is
           where a great deal of ritual gets handed over: what comes in, what is
-          sent out, what is not allowed past the door. A doorstep with a job.
+          sent out, what is not allowed past the door.
         </>,
+        <>A doorstep with a job!</>,
       ],
     },
     {
       heading: "Call it courtyard, chowk, bahal and everyone's business",
+      image: {
+        src: gharChowk,
+        alt: "A quiet square in Patan with a two-tiered pagoda temple among red brick houses",
+        caption: "everyone’s business, on a quiet morning",
+        position: "center 45%",
+      },
       paragraphs: [
         <>
-          The chhen itself is traditional red brick with wooden windows carved
-          to a degree that makes no structural sense and total cultural sense.
-          But the part that matters is that it faces inward. A mool ghar
-          typically opens onto an inner courtyard — a chowk, or in the older
-          quarters a bahal — and that courtyard is the actual room of the house.
+          The{" "}
+          {out("https://ecs.com.np/features/a-newari-house-reborn", "chhen")} is
+          red brick and intricately carved wood, but its defining
+          feature is that it turns inward. A mool ghar gathers around a chowk,
+          or bahal in older quarters, making the courtyard the house’s actual
+          room.
         </>,
         <>
           Community feasts happen there. Family feasts happen there. Rituals
@@ -159,6 +224,11 @@ const MOOL_GHAR: BlogPost = {
     },
     {
       heading: "It's called the forbidden room: Agam Chhen",
+      image: {
+        src: gharMoolGhar,
+        alt: "A diyo burning on the floor among marigold petals and sindoor",
+        caption: "as close to the agam chhen as a camera gets",
+      },
       paragraphs: [
         <>
           Here is the part that makes a mool ghar a mool ghar rather than a
@@ -185,10 +255,21 @@ const MOOL_GHAR: BlogPost = {
     },
     {
       heading: "Born as a son or daughter",
+      image: {
+        src: gharHimalHome,
+        alt: "A hand holding three lit diyos over a puja plate in Himal Home, Patan",
+        caption: "same house, same lamps, different rules",
+        position: "center 45%",
+      },
       paragraphs: [
         <>
           Zoom out from the architecture and the same house organises people. If
-          you are born a son, you get bartabandha — the initiation that makes
+          you are born a son, you get{" "}
+          {out(
+            "https://intravelmag.com/intravel/indigenous/hindu-bratabandha-ceremony-nepal",
+            "bartabandha",
+          )}{" "}
+          — the initiation that makes
           you a full member of the lineage, with all the access that comes with
           it.
         </>,
@@ -200,9 +281,20 @@ const MOOL_GHAR: BlogPost = {
     },
     {
       heading: "Husband one: an apple, divine one",
+      image: {
+        src: gharIhi,
+        alt: "A small girl in her Ihi finery and red bangles, held close by a man in glasses",
+        caption: "Ihi day: married to a bel, no regrets",
+        position: "center 35%",
+      },
       paragraphs: [
         <>
-          The first marriage is Ihi, and the groom is a bel fruit — wood apple —
+          The first marriage is{" "}
+          {out(
+            "https://www.sbs.com.au/language/nepali/en/article/the-story-of-ihi-why-girls-from-this-community-are-marrying-a-fruit/32lwcaa4e",
+            "Ihi",
+          )}
+          , and the groom is a bel fruit — wood apple —
           which is a form of Vishnu. It is celebrated exactly like a wedding —
           not the desi kind with the bling, but the kind with ritual, procedure,
           a great deal of red, and genuinely excellent food.
@@ -216,10 +308,21 @@ const MOOL_GHAR: BlogPost = {
     },
     {
       heading: "Husband two: the Sun",
+      image: {
+        src: gharBahra,
+        alt: "A smiling girl in red and gold with a peacock feather in her hair, standing with a man in an argyle sweater",
+        caption: "day twelve, out in the sun at last",
+        position: "center 45%",
+      },
       paragraphs: [
         <>
-          The second is Bahra Tayegu, and the groom is the sun god. Not Jesus,
-          dummy. Although — who knows, who's checking.
+          The second is{" "}
+          {out(
+            "https://steemit.com/wedding/@elishagautam/marriage-with-the-sun-an-important-tradition",
+            "Bahra Tayegu",
+          )}
+          , and the groom is the sun god. Not Jesus,
+          dummy.
         </>,
         <>
           The girl is kept in a room away from direct sunlight and away from men
@@ -230,29 +333,41 @@ const MOOL_GHAR: BlogPost = {
         <>
           Which brings us to why any of this exists. The going explanation is
           that these marriages were built as insurance against sati and against
-          widowhood — if a woman's first husband is a fruit that is a god, and
+          widowhood — if a woman's first husband is a form of God, and
           her second is the sun itself, then no human husband dying can ever
-          make her a widow. Her real husbands are immortal. The third one, the
-          human one, is technically the runner-up.
+          make her a widow. Her real husbands are immortal. The human one is
+          technically the runner-up.
         </>,
       ],
     },
     {
-      heading: "Living goddess: Kumari",
+      heading: "So why all of this?",
+      image: {
+        src: moodLinenAnklets,
+        alt: "Anklets over linen, feet off the ground",
+        caption: "body, mind and spirit, all under one roof",
+      },
       paragraphs: [
         <>
-          At the far end of the same logic sits the Kumari: the living goddess.
-          A young girl, selected from a Newar lineage, who is worshipped as the
-          goddess in a body while she lives in her house in the square, is
-          carried out for festivals, and gives darshan from a carved window that
-          people queue below.
+          So why does a community marry its daughters to fruit and to the sun,
+          keep a room upstairs that most of the family never enters, and worship
+          a doorstep every single morning? Strip the ritual back and the answer
+          is mostly the same: care. Each of these rites turns up at the exact
+          moment a person is changing, and makes sure they are not left to do
+          it alone.
         </>,
         <>
-          She holds the role until she reaches puberty, and then the goddess
-          moves on to the next girl and she goes back to being a person. Same
-          city, same brick, same carved wood as the mool ghar — a whole system
-          built on the idea that the divine keeps an address here, and it is
-          usually somebody's daughter or somebody's upstairs room.
+          Some of it looks after the body: Bahra arrives as a girl is growing
+          up and gives her twelve days of rest, food and being fussed over. Some
+          of it looks after the mind: Ihi and bartabandha tell a child, in front
+          of fifty relatives, that they belong — to a house, a lineage, a
+          courtyard that will always have a plate for them. And some of it
+          looks after the spirit: a god in the family, a doorstep that keeps
+          the wrong things out, a shrine upstairs that never moves.
+        </>,
+        <>
+          Call it superstition if you like. I call it the most thorough
+          insurance policy ever written, and the mool ghar is where it is kept.
         </>,
       ],
     },
@@ -261,35 +376,94 @@ const MOOL_GHAR: BlogPost = {
     <>
       These are all facts, beliefs, and for some people, reality to a
       considerable extent. This is a magnifying lens held over the thing, not a
-      verdict on it.
+      verdict on it. My verdict, if I ever formulate one, goes in 2 cents.
     </>,
-    <>The verdict, if I ever get around to one, goes in 2 cents.</>,
+    <>
+      And because a tour is nothing without the family album: below is April
+      1998, a courtyard dressed in red for the wedding and my sisters lined up
+      in all their tiny, serious bride glory. They got the
+      bel, the feast and the fuss; I got to put it on the internet. Sorry{" "}
+      {ne("दिदिहरु")} but hover around for the gossip!
+    </>,
   ],
+  /* Family photos from the Ihi and Bahra, 1998. */
+  moodBoardLayout: "square",
+  moodBoardTitle: "Moodboard for MoolGhar",
   moodBoard: [
     {
-      image: gharMoolGhar,
-      alt: "A diyo burning on the floor among marigold petals and sindoor",
-      caption: "the floor is the altar and always was",
+      image: moolGharMood01,
+      alt: "Children in paper caps lined up in a garden with a man behind them, a pile of bricks beside",
+      caption: "first marriage of my sisters, 1998",
     },
     {
-      image: gharPujaThali,
-      alt: "A puja thali of flowers, banana and sindoor beside a hand in red bangles holding a rose",
-      caption: "thali, bangles, one rose doing overtime",
+      image: moolGharMood02,
+      alt: "Girls seated in a row on a mat in a courtyard, offering pots and a fire pit in front of them",
+      caption: "lined up, ready for Bel",
     },
     {
-      image: moodPujaMarigold,
-      alt: "Marigolds, diyo, sindoor and incense laid out on brick for puja",
-      caption: "supply run, spiritual, restocked weekly",
+      image: moolGharMood03,
+      alt: "Women passing white thread around a group of small girls beside a clay pot",
+      caption: "the thread goes round and round: ONZ",
     },
     {
-      image: gharPatanAerial,
-      alt: "Patan Durbar Square from above: Krishna Mandir, pagoda roofs and the crowded square",
-      caption: "the neighbourhood, from somebody's roof",
+      image: moolGharMood04,
+      alt: "Girls in red and white eating from plates of beaten rice and curry on the stone floor",
+      caption: "excellent food, as promised",
     },
     {
-      image: moodNewarTattoo,
-      alt: "Traditional leg tattoo of a temple façade and peacocks",
-      caption: "the architecture, worn permanently",
+      image: moolGharMood05,
+      alt: "A woman draping thread over a line of girls while family watch from a brick doorway",
+      caption: "the thread goes round and round: ANZ",
+    },
+    {
+      image: moolGharMood06,
+      alt: "A woman crouched before small girls in red and gold while women stand watching",
+      caption: "somebody checking the bride is still listening",
+    },
+    {
+      image: moolGharMood07,
+      alt: "A man in white holding a cloth while girls sit on a mat behind him",
+      caption: "procedure, and a lot of it",
+    },
+    {
+      image: moolGharMood08,
+      alt: "A crowded courtyard of girls in red and gold holding plates among family",
+      caption: "fifty people and four hours, roughly",
+    },
+    {
+      image: moolGharMood09,
+      alt: "An elder in white with a small girl on his lap, family and children around a puja plate",
+      caption: "the family photo after the family wedding",
+    },
+    {
+      image: moolGharMood10,
+      alt: "Girls in red sitting in a row beside fruit, pots and a square fire pit",
+      caption: "fruit on the ground, fruit for a husband",
+    },
+    {
+      image: moolGharMood11,
+      alt: "Four girls in gold and red silk holding leaf plates in a lane",
+      caption: "four brides, no grooms in sight",
+    },
+    {
+      image: moolGharMood12,
+      alt: "Two girls with yellow headbands seated while women tend to them indoors",
+      caption: "the twelve-day room",
+    },
+    {
+      image: moolGharMood13,
+      alt: "A woman washing the hands of two girls in yellow headbands over a bowl",
+      caption: "hands washed, nearly back in the sun",
+    },
+    {
+      image: moolGharMood14,
+      alt: "Three children in silk and paper caps sitting on a step with bowls",
+      caption: "three on a step, done for the day",
+    },
+    {
+      image: moolGharMood15,
+      alt: "A woman crouching before a line of girls in a sunny courtyard with a clay pot",
+      caption: "the courtyard doing its job",
     },
   ],
 };
@@ -302,12 +476,14 @@ const FESTIVAL_CALENDAR: BlogPost = {
   title: "by Bikram Sambat",
   devanagari: "बाह्र महिना,",
   date: "Jul 10, 2026",
-  readTime: "4 min read",
+  readTime: "6 min read",
   music: {
-    spotify: "3XavmNx1VD3nLg0qmWNRtf",
-    title: "Man Magan",
+    youtube: "A0GOxBvHNNg",
+    backdrop: moodPujaMarigold,
+    title: "“Man Magan”",
     artist: "Deepak Bajracharya",
-    note: "press play. The Right Sound for a Calendar Steeped in Culture.",
+    hideArtist: true,
+    note: "The right soundtrack for a year this full.",
   },
   intro: [
     <>
@@ -325,102 +501,172 @@ const FESTIVAL_CALENDAR: BlogPost = {
       tells you when to plant, when to feast, and when the mountains will be
       out.
     </>,
-    <>
-      The first month is Baisakh, and it lands mid-April into mid-May — so on a
-      2026 calendar the new year falls in the middle of April, not in January.
-      It is the tail of the dry season: warm days, cool nights, and the
-      pre-monsoon storms only just starting to turn up in the evenings.
-      Everything after it runs largely on the moon, so the dates drift a couple
-      of weeks year to year. The season holds, the day does not. Here is the
-      year in order.
-    </>,
   ],
   sections: [
     {
       heading: month("बैशाख", "Baisakh"),
+      image: {
+        src: gharChowk,
+        alt: "A two-tiered pagoda temple in a quiet Patan square, red brick houses around it",
+        caption: "Patan, clearing a path for the chariot",
+        position: "center 45%",
+      },
       paragraphs: [
         <>
-          The year turns over here, mid-April into mid-May. Bisket Jatra takes
-          Bhaktapur — chariots hauled through the streets, a pole raised and
-          brought down, and a crowd that decides how it goes. Warm days,
-          rhododendron up in the hills, and the haze not yet thick enough to
-          hide the mountains. Rato Machhindranath's chariot begins its slow
-          crawl through Patan.
+          The year turns over here, mid-April into mid-May, on Baisakh 1. Bisket
+          Jatra has already started in Bhaktapur — it runs from the last days
+          of Chaitra across the new year — chariots hauled through the
+          streets, a pole raised and brought down, and a crowd that decides how
+          it goes. Mata Tirtha Aunsi is Mother&rsquo;s Day by the Bikram
+          Sambat calendar, and Rato Machhindranath&rsquo;s chariot begins its
+          slow crawl through Patan.
+        </>,
+        <>
+          The month is crowded with birthdays: Parshuram Jayanti, Sita Jayanti,
+          and Buddha Jayanti on the full moon. Akshaya Tritiya marks the day
+          Shiva and Parvati were married. Warm days, rhododendron up in the
+          hills, and the haze not yet thick enough to hide the mountains.
         </>,
       ],
     },
     {
       heading: month("जेठ", "Jestha"),
+      image: {
+        src: gharGosaikunda,
+        alt: "Sitting on a rock at the edge of a still alpine lake in the mountains",
+        caption: "Gosaikunda, worth every step up",
+        position: "center 50%",
+      },
       paragraphs: [
         <>
-          Mid-May into mid-June: hot, heavy, and visibly waiting for rain. Rato
-          Machhindranath finishes with Bhoto Jatra, and Sithi Nakha sends the
-          Newar neighbourhoods down into the wells and ponds to clean them
-          before the monsoon fills them again. The valley is at its least
-          comfortable; the month belongs to the hills.
+          Mid-May into mid-June: hot, heavy, and visibly waiting for rain. The
+          valley is at its least comfortable, so the month belongs to the
+          hills. Gosaikunda is the walk: around nine days there and back, up to
+          a lake at 4,380m that Shiva is said to have struck open with his
+          trishul to cool the poison in his throat — the poison that turned it
+          blue and made him Nilkantha.
         </>,
       ],
     },
     {
       heading: month("असार", "Ashad"),
+      image: {
+        src: lakeWater,
+        alt: "Bare feet over the bow of a blue wooden boat on lake water",
+        caption: "monsoon water, feet first",
+        position: "center 55%",
+      },
       paragraphs: [
         <>
-          The monsoon lands, mid-June into mid-July. Asar 15 is Ropain — rice
-          planting, knee-deep mud, singing, dahi-chiura eaten sitting in the
-          field. The trails turn to cloud and leeches. The valley goes a green
-          it does not manage any other month of the year.
+          The monsoon lands, mid-June into mid-July. Rato Machhindranath
+          finishes with Bhoto Jatra, the god&rsquo;s jewelled vest held up to
+          the crowd in Jawalakhel. Asar 15 is dahi chiura khane din, the big
+          day for farmers: rice planting, knee-deep mud, singing, and
+          dahi-chiura eaten sitting in the field. Call it a mud fest with a
+          harvest at the end of it.
+        </>,
+        <>
+          Gorakhkali puja is held in Gorkha and at Pashupatinath, and
+          Bhanubhakta Jayanti remembers the poet who put the Ramayana into
+          Nepali. The trails turn to cloud and leeches, and the valley goes a
+          green it does not manage any other month of the year.
         </>,
       ],
     },
     {
       heading: month("साउन", "Shrawan"),
+      image: {
+        src: gharPatanAerial,
+        alt: "Patan Durbar Square from above under a heavy grey sky",
+        caption: "a sky that keeps on giving",
+        position: "center 40%",
+      },
       paragraphs: [
         <>
-          Mid-July into mid-August is full rain, and Shiva's month: green
-          bangles, green saris, Mondays at Pashupatinath. It closes on Janai
-          Purnima, which is when Gosaikunda fills up — a lake at 4,380m, a hard
-          walk to reach it, and thousands of people going up regardless. Kwati
-          the same day, nine different beans in one soup.
+          Mid-July into mid-August is full rain, and Shiva&rsquo;s month: green
+          bangles, green saris, Mondays at Pashupatinath. Shrawan Sankranti is
+          the cultural clock — from here the chadbad, the festival season,
+          officially starts counting down.
+        </>,
+        <>
+          Tulsi gets planted in the courtyard on tulsi ropne din, Teacher&rsquo;s
+          Day thanks the gurus, and Shrawan 15 is kheer khane din: rice pudding,
+          warm, for everyone, and nobody asks why.
         </>,
       ],
     },
     {
       heading: month("भदौ", "Bhadra"),
+      image: {
+        src: moodNewarTattoo,
+        alt: "Traditional Newar leg tattoos of a temple window and peacocks",
+        caption: "jatra season, worn on the skin",
+        position: "center 40%",
+      },
       paragraphs: [
         <>
-          Mid-August into mid-September. The rain thins out and the jatras stack
-          up. Gai Jatra: cows, costumes, satire, and the year's dead remembered
-          by being laughed at. Matayā follows in Patan — every Buddhist shrine
-          in the city touched in a single day, on foot, which is a triathlon if
-          anyone is honest about it. Then Teej, Krishna Janmashtami and Indra
-          Jatra, the Kumari's chariot out and the Lakhey clearing the street
-          ahead of it.
+          Mid-August into mid-September. The rain thins out and the festivals
+          stack up. Naag Panchami pastes the serpent gods above every door.
+          Janai Purnima renews the sacred thread, sends thousands up to
+          Gosaikunda, and is kwati khane din — nine different beans in one
+          soup. Matayā follows in Patan: every Buddhist shrine in the city
+          touched in a single day, on foot, which is a triathlon if anyone is
+          honest about it.
+        </>,
+        <>
+          Then Gai Jatra: cows, costumes, satire, and the year&rsquo;s dead
+          remembered by being laughed at. Krishna Janmashtami, Teej, and
+          Paigambar Jayanti for the Prophet&rsquo;s birthday. And now the
+          month holds the Gen Z shahid too, the young people killed in the
+          protests of 2082, remembered in the same weeks as everyone else the
+          city mourns.
         </>,
       ],
     },
     {
       heading: month("असोज", "Ashwin"),
+      image: {
+        src: moodPujaMarigold,
+        alt: "Marigolds, diyo, sindoor and incense laid out on brick for puja",
+        caption: "marigolds on everything, starting here",
+        position: "center 70%",
+      },
       paragraphs: [
         <>
-          Mid-September into mid-October: the sky empties and Dashain arrives,
-          which is Christmas and then some — new clothes, tika and jamara, the
-          largest feast of the year and the best Newari food in it, kites in the
-          air, markets that do not sleep, marigolds on everything. It is also
-          the last real heat before winter and the week the trekking season
-          opens. The air does not get clearer than this.
+          Mid-September into mid-October, and the sky empties. Biswakarma Puja
+          comes first: tools, machines, cars and laptops get tika and a
+          marigold, because anything that works for you deserves thanks. Indra
+          Jatra takes Kathmandu Durbar Square, the Kumari&rsquo;s chariot out
+          and the Lakhey clearing the street ahead of it. Father&rsquo;s Day by
+          the Bikram Sambat calendar falls here too.
+        </>,
+        <>
+          It is the last real heat before winter and the week the trekking
+          season opens. The air does not get clearer than this.
         </>,
       ],
     },
     {
       heading: month("कार्तिक", "Kartik"),
+      image: {
+        src: gharHimalHome,
+        alt: "A hand holding three lit diyos over a puja plate",
+        caption: "oil lamps, five nights running",
+        position: "center 45%",
+      },
       paragraphs: [
         <>
-          Mid-October into mid-November brings Tihar, five days of thanking
-          everything that is alive, ourselves included: kaag puja for the crow,
-          kukur puja for the dog, gai and Laxmi puja, mha puja for your own
-          body, bhai tika for the siblings. Oil lamps down every street. Vishnu
-          wakes at Haribodhini Ekadashi, and Budhanilkantha takes the crowd for
-          it.
+          Mid-October into mid-November is the big one. Dashain first, which is
+          Christmas and then some — new clothes, tika and jamara, the largest
+          feast of the year and the best Newari food in it, kites in the air,
+          markets that do not sleep, marigolds on everything.
+        </>,
+        <>
+          Then Tihar, five days of thanking everything that is alive, ourselves
+          included: kaag puja for the crow, kukur puja for the dog, gai and
+          Laxmi puja, mha puja for your own body, bhai tika for the siblings.
+          Oil lamps down every street. Kartik Nach fills Patan Durbar Square
+          with masked dance-drama, the way it has for centuries.
         </>,
         <>
           Dashain and Tihar sit about two weeks apart, which is exactly the
@@ -431,23 +677,40 @@ const FESTIVAL_CALENDAR: BlogPost = {
     },
     {
       heading: month("मंसिर", "Mangsir"),
+      image: {
+        src: gharTrekking,
+        alt: "Hooded, buffed and sunglassed on a cold pass, snowed-on peaks behind",
+        caption: "cold, dry and dressed for it",
+        position: "center 30%",
+      },
       paragraphs: [
         <>
           Mid-November into mid-December. Cold, dry, and the mountains at their
-          sharpest all year. Wedding season, so a procession is likely wherever
-          you happen to be standing. Yomari Punhi on the full moon — steamed
-          dumplings shaped like figs, chaku and sesame inside, eaten hot. Bala
-          Chaturdashi brings the night-long walk through Pashupatinath.
+          sharpest all year. Wedding season starts, so a procession is likely
+          wherever you happen to be standing. Bibaha Panchami re-enacts Ram and
+          Sita&rsquo;s wedding, and Janakpur throws it like the real thing.
+          Bala Chaturdashi brings the night-long walk through Pashupatinath.
         </>,
       ],
     },
     {
       heading: month("पुष", "Poush"),
+      image: {
+        src: basecamp,
+        alt: "Arms out on a rocky trail below snow-covered Himalayan peaks",
+        caption: "high is cold, empty and enormous",
+        position: "center 45%",
+      },
       paragraphs: [
         <>
           Mid-December into mid-January: the valley fogs in and the sun does not
-          properly show up until ten. Coldest, quietest month, and Tamu Lhosar
-          for the Gurung new year. The country sorts itself by altitude: low is
+          properly show up until ten. Yomari Punhi on the full moon — steamed
+          dumplings shaped like figs, chaku and sesame inside, eaten hot. Tamu
+          Lhosar for the Gurung new year, and Prithvi Jayanti for the king who
+          pulled the country together.
+        </>,
+        <>
+          Coldest, quietest month. The country sorts itself by altitude: low is
           Chitwan, Pokhara and the Terai, high is cold, empty trails and
           enormous views.
         </>,
@@ -455,37 +718,63 @@ const FESTIVAL_CALENDAR: BlogPost = {
     },
     {
       heading: month("माघ", "Magh"),
+      image: {
+        src: gharPujaThali,
+        alt: "A puja thali of flowers, banana and sindoor beside a hand holding a rose",
+        caption: "a fresh start, offered with both hands",
+        position: "center 40%",
+      },
       paragraphs: [
         <>
           Mid-January into mid-February, and Maghe Sankranti on day one — til ko
           laddu, chaku, ghee, sweet potato, and official notice that the sun is
-          on its way back. Sonam Lhosar for the Tamang new year. Shree Panchami
-          hands the month to Saraswati, which makes it the day to begin anything
-          you intend to be good at.
+          on its way back. Sonam Lhosar for the Tamang new year. All month,
+          households read the Swasthani Katha aloud, a chapter a day, the
+          stories of Shiva and Parvati passed down at bedtime.
+        </>,
+        <>
+          Shree Panchami hands the month to Saraswati, which makes it the day
+          to begin anything you intend to be good at.
         </>,
       ],
     },
     {
       heading: month("फागुन", "Falgun"),
+      image: {
+        src: gharMoolGhar,
+        alt: "A diyo burning on the floor among marigold petals and sindoor",
+        caption: "Shivaratri: nobody sleeps",
+        position: "center 50%",
+      },
       paragraphs: [
         <>
           Mid-February into mid-March, and Maha Shivaratri first: Pashupatinath
-          at its absolute fullest, sadhus, fires, nobody sleeping. Then Holi
-          says out loud what the weather has been hinting for a fortnight —
-          winter is finished — and the entire city is complicit. Gyalpo Lhosar
-          as well. Spring turns up somewhere in the middle of it.
+          at its absolute fullest, sadhus, fires, nobody sleeping, and the
+          crowd come for chhaya darshan at the temple. Gyalpo Lhosar for the
+          Sherpa and Tibetan new year. Spring turns up somewhere in the middle
+          of it.
         </>,
       ],
     },
     {
       heading: month("चैत", "Chaitra"),
+      image: {
+        src: gharFacade,
+        alt: "Standing under the carved timber arcade of a red brick Newar building",
+        caption: "warm again, and round it goes",
+        position: "center 60%",
+      },
       paragraphs: [
         <>
-          Mid-March into mid-April, and warm again. Ghode Jatra runs the horses
-          across Tundikhel, Seto Machhindranath goes through Kathmandu, and
-          Chaite Dashain passes quietly. Rhododendron opens up in the hills and
-          the second trekking season starts. Then the year turns over into
-          Baisakh and does all of it again.
+          Mid-March into mid-April, and warm again. Holi says out loud what the
+          weather has been hinting for a fortnight — winter is finished — and
+          the entire city is complicit. Ghode Jatra runs the horses across
+          Tundikhel, and Ram Navami brings Ram&rsquo;s birthday.
+        </>,
+        <>
+          Rhododendron opens up in the hills and the second trekking season
+          starts. Bisket Jatra begins in Bhaktapur in the last days of the
+          month, the year turns over into Baisakh, and does all of it again.
         </>,
       ],
     },
@@ -495,7 +784,7 @@ const FESTIVAL_CALENDAR: BlogPost = {
       Read it as a forecast and it answers like one. Historic and dry: Kartik
       into Mangsir, when the durbar squares, Pashupatinath, Nagarkot and
       Dhulikhel all sit in clear air, and Muktinath is reachable if the days
-      allow. Devotion at altitude: Gosaikunda in Shrawan. Wet, green and useless
+      allow. Devotion at altitude: Gosaikunda in Jestha. Wet, green and useless
       in the best way: Asar, planting rice badly.
     </>,
     <>
@@ -504,32 +793,75 @@ const FESTIVAL_CALENDAR: BlogPost = {
       and when the sky will be clear enough to see Everest. Call it religion,
       call it scheduling. It works.
     </>,
+    <>
+      And because a calendar reads better with pictures: below is the year,
+      Baisakh to Chaitra, one frame a month. Hover for the gossip.
+    </>,
   ],
+  /* The year in twelve frames, one per month, Baisakh to Chaitra. */
+  moodBoardLayout: "square",
+  moodBoardTitle: "Moodboard for Bikram Sambat",
+  moodBoardColumns: 6,
   moodBoard: [
     {
-      image: moodPujaMarigold,
-      alt: "Marigolds, diyo, sindoor and incense laid out on brick for puja",
-      caption: "marigold season, the markets know first",
-    },
-    {
-      image: gharDashain,
-      alt: "A dog on a Kathmandu balcony wearing tika and a marigold garland",
-      caption: "kukur puja. one day a year he outranks us",
+      image: gharChowk,
+      alt: "A pagoda temple in a quiet Patan square",
+      caption: "Baisakh: the year turns over in a square like this",
     },
     {
       image: gharGosaikunda,
-      alt: "Sitting on a rock at the edge of a still alpine lake in the mountains",
-      caption: "Gosaikunda, and everyone who walked up for it",
+      alt: "Sitting at the edge of a still alpine lake in the mountains",
+      caption: "Jestha: nine days up to Nilkantha's lake",
     },
     {
-      image: gharTrekking,
-      alt: "Hooded, buffed and sunglassed on a cold pass, snowed-on peaks behind",
-      caption: "Kartik air, the reason people book a year out",
+      image: lakeWater,
+      alt: "Bare feet over the bow of a blue wooden boat on lake water",
+      caption: "Ashad: the monsoon lands, everything gets wet",
     },
     {
       image: gharPatanAerial,
-      alt: "Patan Durbar Square from above: Krishna Mandir, pagoda roofs and the crowded square",
-      caption: "Patan, between one jatra and the next",
+      alt: "Patan Durbar Square from above under a heavy grey sky",
+      caption: "Shrawan: kheer, tulsi, and the chadbad clock starts",
+    },
+    {
+      image: gharPikhaLakhu,
+      alt: "A puja laid out on the floor: a brass deity, marigolds, rice and a copper plate",
+      caption: "Bhadra: jatras stacked back to back",
+    },
+    {
+      image: moodPujaMarigold,
+      alt: "Marigolds, diyo, sindoor and incense laid out on brick",
+      caption: "Ashwin: Biswakarma, Indra Jatra, the sky clears",
+    },
+    {
+      image: gharDashain,
+      alt: "A dog on a balcony wearing tika and a marigold garland",
+      caption: "Kartik: Dashain, then Tihar. kukur puja, he outranks us",
+    },
+    {
+      image: gharTrekking,
+      alt: "Hooded and sunglassed on a cold pass, peaks behind",
+      caption: "Mangsir: the mountains at their sharpest",
+    },
+    {
+      image: basecamp,
+      alt: "Arms out on a rocky trail below snowy Himalayan peaks",
+      caption: "Poush: high, cold, empty, enormous",
+    },
+    {
+      image: gharPujaThali,
+      alt: "A puja thali of flowers and banana beside a hand holding a rose",
+      caption: "Magh: Swasthani Katha, a chapter a night",
+    },
+    {
+      image: gharMoolGhar,
+      alt: "A diyo burning on the floor among marigold petals",
+      caption: "Falgun: Shivaratri fires, nobody sleeps",
+    },
+    {
+      image: gharFacade,
+      alt: "Standing under the carved arcade of a red brick Newar building",
+      caption: "Chaitra: Holi, horses, and round it goes",
     },
   ],
 };

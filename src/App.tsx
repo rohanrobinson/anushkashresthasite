@@ -1,24 +1,27 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, type ReactNode } from "react"
 
 import BlogPage from "./BlogPage"
 import { getPost } from "./blogPosts"
 
-import heroVideo from "./assets/hero/water.mp4"
-import heroPoster from "./assets/hero/water.jpg"
+import heroVideo from "./assets/hero/painting.mp4"
+import heroPoster from "./assets/hero/painting.jpg"
 import socialsBackdrop from "./assets/footer-media/basecamp-2021.jpg"
-import moodBeachBook from "./assets/mood/04-beach-book.jpg"
-import moodMirrorSelfie from "./assets/mood/06-mirror-selfie.jpg"
-import moodNightOut from "./assets/mood/07-night-out.jpg"
-import moodRailroadDusk from "./assets/mood/08-railroad-dusk.jpg"
-import moodOakUnderpass from "./assets/mood/10-oak-underpass.jpg"
-import moodNightWalk from "./assets/mood/11-night-walk.jpg"
-import moodBarMirror from "./assets/mood/18-bar-mirror.jpg"
-import moodShopCat from "./assets/mood/16-shop-cat.jpg"
-import moodBedPlants from "./assets/mood/17-bed-plants.jpg"
-import moodCrownedSkull from "./assets/mood/14-crowned-skull.jpg"
-import gharMoolGhar from "./assets/ghar/mool-ghar-diyo.jpg"
-import gharDashain from "./assets/ghar/dashain-tika-dog.jpg"
-import gharPujaThali from "./assets/ghar/puja-thali-rose.jpg"
+import MoodReel from "./MoodReel"
+import useIsPhone from "./useIsPhone"
+import moodLakefrontSkyline from "./assets/mood/31-lakefront-skyline.jpg"
+import moodNightRose from "./assets/mood/21-night-rose.jpg"
+import moodJetskiSunset from "./assets/mood/22-jetski-sunset.jpg"
+import moodBeachCap from "./assets/mood/23-beach-cap.jpg"
+import moodCoconutCan from "./assets/mood/24-coconut-can.jpg"
+import moodMarketTiger from "./assets/mood/25-market-tiger.jpg"
+import moodLakeWade from "./assets/mood/32-lake-wade.jpg"
+import moodGoldWings from "./assets/mood/34-gold-wings.jpg"
+import moodSilkSkirtWalk from "./assets/mood/28-silk-skirt-walk.jpg"
+import moodWindowLeopard from "./assets/mood/29-window-leopard.jpg"
+import moodWineBarOlive from "./assets/mood/30-wine-bar-olive.jpg"
+import gharMoolGhar from "./assets/ghar/mool-ghar-diyo-thumb.jpg"
+import gharDashain from "./assets/ghar/dashain-tika-dog-thumb.jpg"
+import gharTreePoseLake from "./assets/ghar/tree-pose-lake-thumb.jpg"
 import twoCents001 from "./assets/twocents/001-mirror-glitch.jpg"
 import twoCents002 from "./assets/twocents/002-kitchen-read.jpg"
 import twoCents003 from "./assets/twocents/003-boot-golden-hour.jpg"
@@ -35,16 +38,19 @@ const NAV_ITEMS = [
 // the first frame while the video loads, and stands in for visitors who have
 // reduced motion turned on.
 const HERO_MEDIA = {
-  // Looking down over the bow of a blue wooden boat onto green water, bare
-  // feet and an orange skirt in frame. 9.5s, so it loops whole. Converted
-  // from the source .MOV (QuickTime will not play outside Safari) and shipped
-  // at the source 1080x1920 (5.8 MB) — the smaller avconvert preset came out
-  // heavier, same as the clip before it.
+  // Overhead, painting a green leaf on canvas with tubes and brushes on the
+  // rug around it. 2:00–4:00 of the 7-minute painting.mov (HEVC, 606 MB, kept
+  // out of git), cut with ffmpeg to 720x1280 H.264, no audio, faststart so it
+  // streams from the first second: 8.3 MB. avconvert's presets either came
+  // out ~75 MB or dropped to 320px wide, too soft for a full-bleed ground.
   src: heroVideo,
   webm: "",
   // The clip's own first frame, so poster and video match exactly.
   poster: heroPoster,
-  alt: "Looking down over the bow of a blue wooden boat onto still green water",
+  alt: "Overhead view of a hand painting a green leaf on canvas, paint tubes and brushes on the rug around it",
+  // The clip is portrait, so a wide hero crops it to a band; this keeps the
+  // canvas in that band.
+  position: "center 40%",
 }
 
 // Every 2 cents column opens the Instagram it actually lives on.
@@ -52,25 +58,21 @@ const INSTAGRAM_2CENTS = "https://www.instagram.com/2cents_at2am/"
 
 const TWO_CENTS_POSTS = [
   {
-    no: "001",
-    image: twoCents001,
-    imageAlt:
-      "Mirror selfie shot through a glitch filter, phone raised, paintings behind",
-    imagePosition: "center 38%",
-    kicker: "अक्षय तृतीया edition",
-    title: "the one whose skull she wears",
-    excerpt:
-      "So ancient that even the devas do not know whose skull adorns her necklace — for they have never seen her without it.",
-    instagram: "https://www.instagram.com/p/DXVfGzSAEZ-/?img_index=1",
-  },
-  {
     no: "002",
     image: twoCents002,
     imageAlt:
       "Reading at a kitchen table in Kathmandu, brass goblet and glasses out",
     imagePosition: "center 42%",
-    kicker: "Jul 2, 2025",
-    title: "to the वोमन I'm to be",
+    kicker: "Jul 3, 2025",
+    // In place of a title: a first-person note on when and how it was
+    // written, with the line that set it off picked out, and a hook that is
+    // the link through to the post.
+    note: {
+      text: "Penned at 2 AM, post-meltdown & mid‑smoke, with a soundtrack that apparently had something to say. breakdown turned into a breakthrough:",
+      lyric: "I’m the one that introduced you to the you right now.",
+      // The button draws its own → after this.
+      hook: "see what 2 am me figured out",
+    },
     excerpt:
       "To the girl I was and the person I am. Change is inevitable — you have already done things you once swore you never would. The only say you get is in which versions of yourself you carry forward.",
     instagram: "https://www.instagram.com/p/DLoiMmMgT-c/?img_index=1",
@@ -82,13 +84,63 @@ const TWO_CENTS_POSTS = [
       "Car doors open in a pine clearing at golden hour, reading in the boot",
     imagePosition: "center 62%",
     kicker: "Dec 22, 2025",
-    title: "you are not lost, you are remembering",
+    note: {
+      text: "Started painting with shrooms in my tea, thinking I’d play with colours. Ended up wandering through a universe I didn’t know existed inside me.",
+      lyric: "The destination you seek has been within you all along.",
+      hook: "Where Colours Took Me",
+    },
     excerpt:
       "We are divine beings having a human experience, carrying a homesickness for somewhere we cannot point to. We never feel fully home here because home is not of this world. That ache is not emptiness — it is direction.",
     instagram: "https://www.instagram.com/p/DSmCTYwAA26/?img_index=1",
   },
+  {
+    no: "001",
+    image: twoCents001,
+    imageAlt:
+      "Mirror selfie shot through a glitch filter, phone raised, paintings behind",
+    imagePosition: "center 38%",
+    kicker: "Apr 19, 2026",
+    note: {
+      text: (
+        <>
+          Wrote this on my{" "}
+          <span lang="ne" style={{ fontFamily: "var(--font-devanagari)" }}>
+            तिथि
+          </span>{" "}
+          birthday! Unlike a Gregorian birthday that sticks to the same date
+          every year, mine moves around with the lunar calendar.
+        </>
+      ),
+      lyric: "The moon picks the day. I just show up.",
+      hook: "What 29 felt like",
+    },
+    excerpt:
+      "So ancient that even the devas do not know whose skull adorns her necklace — for they have never seen her without it.",
+    instagram: "https://www.instagram.com/p/DXVfGzSAEZ-/?img_index=1",
+  },
 ]
 
+/* A post with `availableOn` stays "coming soon" until that day, in the
+   reader's own time zone, then opens on its own. It takes a full date
+   (YYYY-MM-DD) or just a year (YYYY), which opens on January 1. */
+function availableDate(when: string) {
+  return new Date(`${when.length === 4 ? `${when}-01-01` : when}T00:00`)
+}
+
+function isOpen(post: { availableOn?: string }) {
+  return !post.availableOn || availableDate(post.availableOn) <= new Date()
+}
+
+function availableLabel(when: string) {
+  if (when.length === 4) return `in ${when}`
+  return `on ${availableDate(when).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  })}`
+}
+
+// Card thumbnails are pre-cropped with the subject dead centre, so the cover
+// crop keeps it centred whatever shape the cell is; the posts use the originals.
 const GHAR_POSTS = [
   {
     image: gharMoolGhar,
@@ -96,6 +148,7 @@ const GHAR_POSTS = [
     tag: "Origin Story",
     slug: "mool-ghar",
     title: "The meaning behind Mool Ghar",
+    availableOn: "2026-10-21",
     body: "In my culture, mool ghar literally means \u201cancestral house,\u201d but the words hold much more than a building. It is the sacred, social and ritual centre of family life~ a place where ancestry, tradition and everyday life meet. If Newari culture is worth your time, come read along.",
     date: "Jul 30, 2026",
   },
@@ -113,15 +166,17 @@ const GHAR_POSTS = [
         , by Bikram Sambat
       </>
     ),
-    body: "Nepal runs on Bikram Sambat, roughly 57 years ahead of the Gregorian calendar, with the year turning over in mid-April. Twelve months, Baisakh through Chaitra, and each one arrives with its own weather and its own festivals, so the calendar doubles as the forecast: when to plant, when to feast, when the sky finally clears. Call it religion, call it scheduling. It works.",
+    availableOn: "2026-11-10",
+    body: "Fun fact: I come from the future. Back home it is already 2083, and the new year lands in April, not January. Growing up, kheer meant Shrawan, Holi marked the end of winter, and Happu adorned with a marigold garland meant Tihar, heralding the beginning of winter. These are my twelve months, from Baisakh to Chaitra, remembered through the festivals, flavours, and little traditions that made them home.",
     date: "Jul 10, 2026",
   },
   {
-    image: gharPujaThali,
+    image: gharTreePoseLake,
     imageAlt:
-      "A puja thali of flowers, banana and sindoor beside a hand in red bangles holding a rose",
+      "Balancing in tree pose on a lakeside rock below snow-dusted mountains, in a cream sweater, black shorts and banana-print socks",
     tag: "Roots",
     title: "No, it does not snow where I am from",
+    availableOn: "2027",
     body: "Kathmandu? Sort of. I am from Patan, the city across the river, and more precisely from Mangal Bazar, where Krishna Mandir, the old palace and more shrines than streets stand shoulder to shoulder. Here is the geography, the stone, and why the answer to the snow question is always no.",
     date: "Jun 28, 2026",
   },
@@ -137,78 +192,186 @@ type MoodCredit = {
   item: string
   brand?: string
   href?: string
+  // Phones drop credit links unless this is set.
+  phoneLink?: boolean
 }
 
+/* `focus` is where the mood sits in the frame and `zoom` how far to push in
+   on it, for the mosaic's cropped tiles. The reel ignores both and shows
+   every photo whole. */
 type MoodBoardImage = {
   image: string
   alt: string
+  // Plain text, also used for screen-reader labels.
   caption: string
+  // Optional styled version shown in place of `caption`, e.g. a crossed-out word.
+  captionContent?: ReactNode
   credits?: MoodCredit[]
-  position?: string
+  focus?: string
+  zoom?: number
 }
 
 const MOOD_BOARD_IMAGES: MoodBoardImage[] = [
+  /* A colour board, ordered by outfit and light rather than by date. Day
+     runs pale to dark: white and sky blue, blue, teal and turquoise, black
+     over lake water, black and white, leopard, then brown. The jet ski
+     sunset is the turn from day to night, and the night shots carry on
+     from there: gold and brown, olive, and last the darkest, black with
+     amber lenses. */
   {
-    image: moodCrownedSkull,
-    alt: "A matte black skull in a gold glitter crown, held up in one hand",
-    caption: "he's dead, he's royal, he's coming home with me",
+    image: moodLakefrontSkyline,
+    credits: [
+      {
+        item: "Columbia rain jacket",
+        href: "https://www.columbia.com/c/womens-raincoats-jackets/",
+      },
+      {
+        item: "jordan for kicks",
+        href: "https://www.nike.com/w/womens-jordan-37eefz5e1x6",
+      },
+    ],
+    alt: "Standing alone on a raked lakefront beach in a floral rain jacket, the Chicago skyline behind",
+    caption: "lake and the skyline keeping company",
+    focus: "50% 64%",
+    zoom: 1.6,
   },
   {
-    image: moodRailroadDusk,
-    credits: [{ item: "denim jacket" }, { item: "denim shorts" }],
-    alt: "Standing on the railroad tracks at dusk, pointing at the sky",
-    caption: "double denim on the tracks, blue hour did the rest",
+    image: moodBeachCap,
+    credits: [
+      {
+        item: "Target’s pink&white swimsuit",
+        href: "https://www.target.com/c/swimsuits-women-s-clothing/-/N-5xtbw",
+      },
+    ],
+    alt: "Sitting cross-legged on a beach towel in a blue cap and an oversized tee with a paisley bandeau",
+    caption: "sand where it counts, concrete everywhere else",
+    focus: "50% 40%",
+    zoom: 1.4,
   },
   {
-    image: moodMirrorSelfie,
-    credits: [{ item: "lounge set" }],
-    alt: "Mirror selfie under warm bathroom lights",
-    caption: "nothing on the calendar, everything on the lighting",
+    image: moodSilkSkirtWalk,
+    credits: [{ item: "silk maxi skirt" }, { item: "crochet crop" }],
+    alt: "Walking down a leafy city sidewalk in a turquoise and orange silk maxi skirt",
+    caption: "silk skirt, slow walk, nowhere to be",
+    focus: "52% 50%",
+    zoom: 1.45,
   },
   {
-    image: moodBarMirror,
-    credits: [{ item: "head wrap" }],
-    alt: "Reflected in a back-bar mirror between bottles, in a black head wrap",
-    position: "center 45%",
-    caption: "caught my own eye somewhere between rum and tequila",
+    image: moodLakeWade,
+    credits: [{ item: "black tank" }, { item: "black shorts" }],
+    alt: "From behind, wading knee-deep into a clear, glittering lake in a black tank and shorts, hair in a bun",
+    caption: "hands on hips, staring down Lake Michigan",
+    focus: "47% 50%",
+    zoom: 1.4,
   },
   {
-    image: moodShopCat,
-    credits: [{ item: "trench" }],
-    alt: "Holding a black cat in a wicker basket inside a crystal shop",
-    position: "center 40%",
-    caption: "came for crystals, got adopted by the house witch",
+    image: moodCoconutCan,
+    credits: [{ item: "overalls by Jordan" }],
+    alt: "Holding a can of coconut water up in front of my face on a city sidewalk",
+    caption: "in a world full of Celsius, coconut water to my rescue",
+    focus: "54% 30%",
+    zoom: 1.6,
   },
   {
-    image: moodBeachBook,
-    credits: [{ item: "bucket hat" }, { item: "amber lenses" }],
-    alt: "Beach day with a fashion book open on the table",
-    caption: "bucket hat, amber lenses, runway pages",
+    image: moodWindowLeopard,
+    credits: [{ item: "leopard shirt" }, { item: "flared trousers" }],
+    alt: "Sitting barefoot in a high-rise window in a leopard shirt and sunglasses, a plant beside me",
+    caption: "window seat, complaints & PATRÓN Añejo",
+    focus: "76% 50%",
+    zoom: 1.6,
   },
   {
-    image: moodOakUnderpass,
-    credits: [{ item: "striped knit coat" }],
-    alt: "Leaning under the Oak St pedestrian underpass sign at night",
-    caption: "outdressed the entire underpass, nobody was there",
+    image: moodMarketTiger,
+    credits: [{ item: "bucket hat" }, { item: "brown rib tank" }],
+    alt: "From behind at a market stall of rings and earrings, a tiger-eye tattoo on my shoulder",
+    caption: "the tiger eye picks the earrings, I just pay",
+    focus: "40% 48%",
+    zoom: 1.5,
   },
   {
-    image: moodNightOut,
-    credits: [{ item: "olive button dress" }],
-    alt: "Night out in an olive button-front dress",
+    image: moodJetskiSunset,
+    alt: "Silhouette on a jet ski throwing a peace sign at sunset on the lake",
+    caption: "apparently you dont need license to ride this baby",
+    captionContent: (
+      <>
+        apparently you dont need license to <s className="caption-strike">fly</s>{" "}
+        ride this baby
+      </>
+    ),
+    focus: "46% 60%",
+    zoom: 1.9,
+  },
+  {
+    image: moodGoldWings,
+    credits: [
+      {
+        item: "lace cap-sleeve tee",
+        href: "https://www.abercrombie.com/shop/us/p/bra-free-reversible-scoopneck-top-63080321?faceout=model&seq=08&gridProductPosition=2",
+        phoneLink: true,
+      },
+      {
+        item: "brown wide-leg trousers",
+        href: "https://www.abercrombie.com/shop/us/p/curve-love-a-and-f-sloane-tailored-wide-leg-pant-60567886?faceout=model&seq=85&gridProductPosition=2",
+        phoneLink: true,
+      },
+    ],
+    alt: "Standing at night in front of a pair of giant gold wing sculptures in a white lace tee and brown wide-leg trousers",
+    caption: "heaven-sent wings, Abercrombie & Fitch fit",
+    focus: "55% 56%",
+    zoom: 1.4,
+  },
+  {
+    image: moodWineBarOlive,
+    credits: [{ item: "olive strapless dress from Artzia" }],
+    alt: "Tongue out outside a wine bar at night in an olive button-front strapless dress",
     caption: "dressed for a wine list I fully did not read",
+    focus: "47% 42%",
+    zoom: 1.35,
   },
   {
-    image: moodNightWalk,
-    credits: [{ item: "hooded jacket" }, { item: "wide-leg trousers" }],
-    alt: "Walking a Chicago sidewalk at night, skyline lit behind",
-    caption: "romanticising the walk home, as one does",
-  },
-  {
-    image: moodBedPlants,
-    alt: "Lying on a bed surrounded by houseplants, prayer flags on the wall",
-    caption: "home away from Home",
+    image: moodNightRose,
+    credits: [
+      {
+        item: "baby tee from skims",
+        href: "https://skims.com/products/cotton-jersey-t-shirt-soot",
+        phoneLink: true,
+      },
+    ],
+    alt: "Striking a pose at a bus stop at night with a single rose and amber sunglasses",
+    caption: "copying homie's pose but with crystals & rose!",
+    focus: "47% 52%",
+    zoom: 1.35,
   },
 ]
+
+/* Which mood board layout to show: the original "mosaic" or the "reel".
+   Pick one with ?board=mosaic or ?board=reel in the address; the choice is
+   remembered on that device so a tester keeps seeing the same one. With
+   neither, the reel shows. The section carries data-board-variant so an
+   analytics tool can split results by layout. */
+type BoardVariant = "mosaic" | "reel"
+const BOARD_VARIANTS: BoardVariant[] = ["mosaic", "reel"]
+const BOARD_VARIANT_KEY = "mood-board-variant"
+
+function useBoardVariant(): BoardVariant {
+  const [variant] = useState<BoardVariant>(() => {
+    try {
+      const asked = new URLSearchParams(window.location.search).get("board")
+      if (asked && (BOARD_VARIANTS as string[]).includes(asked)) {
+        localStorage.setItem(BOARD_VARIANT_KEY, asked)
+        return asked as BoardVariant
+      }
+      const saved = localStorage.getItem(BOARD_VARIANT_KEY)
+      if (saved && (BOARD_VARIANTS as string[]).includes(saved)) {
+        return saved as BoardVariant
+      }
+    } catch {
+      // Storage blocked (private mode etc.): fall through to the default.
+    }
+    return "reel"
+  })
+  return variant
+}
 
 function Nav({
   active,
@@ -232,6 +395,7 @@ function Nav({
       }}
     >
       <div
+        className="nav-inner"
         style={{
           maxWidth: 1200,
           margin: "0 auto",
@@ -243,6 +407,7 @@ function Nav({
         }}
       >
         <button
+          className="nav-name"
           onClick={onHome}
           aria-label="Anushka Shrestha — back to top"
           style={{
@@ -266,7 +431,10 @@ function Nav({
         >
           Anushka Shrestha
         </button>
-        <nav style={{ display: "flex", gap: "2.25rem", alignItems: "center" }}>
+        <nav
+          className="nav-links"
+          style={{ display: "flex", gap: "2.25rem", alignItems: "center" }}
+        >
           {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
@@ -329,7 +497,7 @@ function Hero() {
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    objectPosition: "center 72%",
+    objectPosition: HERO_MEDIA.position,
     display: "block",
     filter: "saturate(1.08) contrast(1.05)",
   } as const
@@ -365,24 +533,70 @@ function Hero() {
 
   return (
     <section
+      className="hero"
       style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(22rem, 1fr))",
+        position: "relative",
+        display: "flex",
+        alignItems: "flex-end",
         backgroundColor: "transparent",
         overflow: "hidden",
+        minHeight: "40rem",
       }}
     >
-      {/* Left */}
+      {/* Footage across the whole section, behind the text */}
+      <div className="hero-media" aria-hidden={!showVideo}>
+        {showVideo ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={HERO_MEDIA.poster}
+            aria-label={HERO_MEDIA.alt}
+            onError={() => setVideoFailed(true)}
+            style={mediaStyle}
+          >
+            {HERO_MEDIA.webm ? (
+              <source src={HERO_MEDIA.webm} type="video/webm" />
+            ) : null}
+            <source src={HERO_MEDIA.src} type="video/mp4" />
+          </video>
+        ) : (
+          <img src={HERO_MEDIA.poster} alt={HERO_MEDIA.alt} style={mediaStyle} />
+        )}
+
+        {/* Holds the footage in the palette. */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: "var(--color-oxblood)",
+            mixBlendMode: "soft-light",
+            opacity: 0.4,
+            pointerEvents: "none",
+          }}
+        />
+        {/* Darkens the side the text sits on so it stays readable. */}
+        <div className="hero-scrim" aria-hidden="true" />
+      </div>
+
       <div
+        className="hero-text"
         style={{
+          position: "relative",
+          zIndex: 1,
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-end",
           padding: "7rem 3.5rem 3.5rem",
           minHeight: "34rem",
+          maxWidth: "44rem",
         }}
       >
         <h1
+          className="hero-title"
           style={{
             fontFamily: "var(--font-display)",
             fontWeight: 600,
@@ -393,22 +607,36 @@ function Hero() {
             margin: 0,
           }}
         >
-          <span style={kicker}>Nush&rsquo;s</span>
-          <span lang="ne" style={devanagari}>
-            कथा
+          <span className="hero-kicker" style={kicker}>
+            Nush&rsquo;s
           </span>
-          <span style={gloss}>: Katha / Stories</span>
-          <br />
-          <em style={{ fontStyle: "italic", color: "var(--color-saffron)" }}>
-            outfits
-          </em>{" "}
-          &amp;
-          <br />
-          essence of{" "}
-          <span lang="ne" style={devanagari}>
-            घर
+          <span className="hero-lines-desktop">
+            <span className="hero-dev" lang="ne" style={devanagari}>
+              कथा
+            </span>
+            <span className="hero-gloss" style={gloss}>: Katha / Stories</span>
+            <br />
+            <em style={{ fontStyle: "italic", color: "var(--color-saffron)" }}>
+              outfits
+            </em>{" "}
+            &amp;
+            <br />
+            essence of{" "}
+            <span className="hero-dev" lang="ne" style={devanagari}>
+              घर
+            </span>
+            <span className="hero-gloss" style={gloss}>: Ghar / Home</span>
           </span>
-          <span style={gloss}>: Ghar / Home</span>
+          {/* Phone-only title: one tight funky line, no glosses. */}
+          <span className="hero-lines-mobile">
+            <span className="hm-line">
+              <span className="hm-dev hm-tilt-l" lang="ne">कथा</span>
+              <span className="hm-comma">,</span>{" "}
+              <span className="hm-outfits">outfits</span>{" "}
+              <span className="hm-amp">&amp;</span>{" "}
+              <span className="hm-dev hm-tilt-r" lang="ne">घर</span>
+            </span>
+          </span>
         </h1>
 
         <p
@@ -428,6 +656,7 @@ function Hero() {
         </p>
 
         <div
+          className="hero-ctas"
           style={{
             marginTop: "1.5rem",
             display: "flex",
@@ -471,79 +700,30 @@ function Hero() {
         </div>
       </div>
 
-      {/* Right — video (or still fallback), graded warm and melted into the ground */}
+      {/* Decorative label */}
       <div
-        style={{ position: "relative", overflow: "hidden", minHeight: "34rem" }}
+        className="hero-label"
+        style={{
+          position: "absolute",
+          bottom: "3rem",
+          right: "2rem",
+          zIndex: 1,
+          writingMode: "vertical-rl",
+          textOrientation: "mixed",
+          fontFamily: "var(--font-body)",
+          fontSize: "0.6875rem",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "var(--color-saffron)",
+          textShadow: "0 1px 6px rgba(45,10,6,0.85)",
+        }}
       >
-        <div className="hero-media">
-          <div className="hero-media-inner">
-            {showVideo ? (
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster={HERO_MEDIA.poster}
-                aria-label={HERO_MEDIA.alt}
-                onError={() => setVideoFailed(true)}
-                style={mediaStyle}
-              >
-                {HERO_MEDIA.webm ? (
-                  <source src={HERO_MEDIA.webm} type="video/webm" />
-                ) : null}
-                <source src={HERO_MEDIA.src} type="video/mp4" />
-              </video>
-            ) : (
-              <img
-                src={HERO_MEDIA.poster}
-                alt={HERO_MEDIA.alt}
-                style={mediaStyle}
-              />
-            )}
-
-            {/* Just enough to hold the footage in the palette. The pour is a
-            light red up here, so this leans on the dark end of the range — a
-            soft-light pass in the ground's own colour washed the clip pale. */}
-            <div
-              aria-hidden="true"
-              style={{
-                position: "absolute",
-                inset: 0,
-                backgroundColor: "var(--color-oxblood)",
-                mixBlendMode: "soft-light",
-                opacity: 0.4,
-                pointerEvents: "none",
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Decorative label */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: "3rem",
-            right: "2rem",
-            writingMode: "vertical-rl",
-            textOrientation: "mixed",
-            fontFamily: "var(--font-body)",
-            fontSize: "0.6875rem",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: "var(--color-saffron)",
-            textShadow: "0 1px 6px rgba(45,10,6,0.85)",
-          }}
-        >
-          Begnas Lake, Nepal
-        </div>
-
-        {/* Sits outside the masked wrappers so it stays solid where the
-            footage has already dissolved into the pour. */}
-        <a href="#socials" className="hero-cta">
-          who, me?
-        </a>
+        Work in progress
       </div>
+
+      <a href="#socials" className="hero-cta">
+        who, me?
+      </a>
     </section>
   )
 }
@@ -554,6 +734,7 @@ function TwoCents() {
   return (
     <section
       id="two-cents"
+      className="twocents-section"
       style={{
         backgroundColor: "transparent",
         padding: "3.5rem 0 7rem",
@@ -597,6 +778,7 @@ function TwoCents() {
             </span>
           </h2>
           <p
+            className="twocents-intro"
             style={{
               fontFamily: "var(--font-body)",
               fontSize: "1rem",
@@ -604,13 +786,13 @@ function TwoCents() {
               color: "var(--color-cream-dim)",
               marginTop: "1.5rem",
               marginBottom: 0,
-              maxWidth: "42rem",
             }}
           >
             this is basically my 2 cents, which started at a random 2 AM. the
             occasional revelation I still stand by in daylight.
           </p>
           <a
+            className="twocents-ig-link"
             href={INSTAGRAM_2CENTS}
             target="_blank"
             rel="noopener noreferrer"
@@ -631,6 +813,7 @@ function TwoCents() {
 
         {/* Three columns, one per post */}
         <div
+          className="twocents-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(17rem, 1fr))",
@@ -685,43 +868,8 @@ function TwoCents() {
                   padding: "1.75rem 1.5rem",
                 }}
               >
-                <span
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "0.75rem",
-                    color: "var(--color-saffron)",
-                    fontWeight: 600,
-                    letterSpacing: "0.06em",
-                  }}
-                >
-                  {post.no} · {post.kicker}
-                </span>
-                <h3
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 400,
-                    fontSize: "1.375rem",
-                    lineHeight: 1.3,
-                    color: "var(--color-cream)",
-                    letterSpacing: "-0.01em",
-                    margin: "0.85rem 0 0.75rem",
-                  }}
-                >
-                  {post.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "0.9375rem",
-                    lineHeight: 1.7,
-                    color: "var(--color-cream-dim)",
-                    margin: 0,
-                  }}
-                >
-                  {post.excerpt}
-                </p>
 
-                {/* Two CTAs, pinned to the bottom so the columns line up. */}
+                {/* The CTA, pinned to the bottom so the columns line up. */}
                 <div
                   style={{
                     marginTop: "auto",
@@ -731,46 +879,44 @@ function TwoCents() {
                     gap: "0.75rem",
                   }}
                 >
-                  {/* Placeholder — swap for <a href="..."> once the blog post exists. */}
-                  <span
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      padding: "0.6rem 1rem",
-                      border: "1px solid var(--color-border)",
-                      color: "var(--color-cream)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    read the full blog
-                  </span>
+                  {/* The note is the link: date, backstory, the line, and the hook. */}
                   <a
+                    className="twocents-note"
                     href={post.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      padding: "0.6rem 1rem",
-                      border: "1px solid var(--color-saffron)",
-                      backgroundColor: "var(--color-saffron)",
-                      color: "var(--color-earth)",
-                      textDecoration: "none",
-                    }}
                   >
-                    open the insta post →
+                    <span className="twocents-note-date">{post.kicker}</span>
+                    <span className="twocents-note-text">
+                      {post.note.text}
+                    </span>
+                    {post.note.lyric ? (
+                      <span className="twocents-note-lyric">
+                        {post.note.lyric}
+                      </span>
+                    ) : null}
+                    <span className="twocents-note-go">
+                      {post.note.hook}
+                    </span>
                   </a>
                 </div>
               </div>
             </article>
           ))}
         </div>
+
+        {/* Phone-only nudge to the Instagram, under the swipe row. */}
+        <p className="twocents-more">
+          My 2 AM brain has more to say. They live on my Insta{" "}
+          <a
+            href={INSTAGRAM_2CENTS}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="2 cents on Instagram"
+          >
+            →
+          </a>
+        </p>
       </div>
     </section>
   )
@@ -778,6 +924,10 @@ function TwoCents() {
 
 function Ghar() {
   const [hovered, setHovered] = useState<number | null>(null)
+  // A post that is not out yet keeps its card but loses its link.
+  const posts = GHAR_POSTS.map((post) =>
+    isOpen(post) ? post : { ...post, slug: undefined },
+  )
 
   return (
     <section
@@ -840,7 +990,6 @@ function Ghar() {
               color: "var(--color-cream-dim)",
               marginTop: "1.5rem",
               marginBottom: 0,
-              maxWidth: "38rem",
             }}
           >
             As the name spells out: a space rooted in memory, tradition and
@@ -853,7 +1002,7 @@ function Ghar() {
         <div
           style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-          {GHAR_POSTS.map((post, i) => (
+          {posts.map((post, i) => (
             <article
               key={i}
               className="ghar-card"
@@ -902,6 +1051,7 @@ function Ghar() {
                 />
               </div>
               <div
+                className="ghar-card-body"
                 style={{
                   padding: "2.5rem 3rem",
                   display: "flex",
@@ -930,17 +1080,9 @@ function Ghar() {
                   >
                     {post.tag}
                   </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "0.8125rem",
-                      color: "rgba(160,144,128,0.6)",
-                    }}
-                  >
-                    {post.date}
-                  </span>
                 </div>
                 <h3
+                  className="ghar-card-title"
                   style={{
                     fontFamily: "var(--font-display)",
                     fontWeight: 400,
@@ -992,6 +1134,14 @@ function Ghar() {
                     }}
                   >
                     Coming soon
+                    {post.availableOn ? (
+                      <>
+                        {" · "}
+                        <span className="ghar-soon-date">
+                          available {availableLabel(post.availableOn)}
+                        </span>
+                      </>
+                    ) : null}
                   </span>
                 )}
               </div>
@@ -1005,89 +1155,49 @@ function Ghar() {
 
 function MoodBoard() {
   const [hovered, setHovered] = useState<number | null>(null)
-  const [linkHovered, setLinkHovered] = useState(false)
+  // Phones get the outfit credits as plain text, bar the few marked phoneLink.
+  const isPhone = useIsPhone()
+  const linkCredit = (credit: MoodCredit) =>
+    Boolean(credit.href) && (!isPhone || Boolean(credit.phoneLink))
+  const variant = useBoardVariant()
 
   return (
     <section
       id="mood-board"
+      data-board-variant={variant}
       style={{
         backgroundColor: "transparent",
-        padding: "3.5rem 0 7rem",
+        padding: "3rem 0 4.5rem",
       }}
     >
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2rem" }}>
-        {/* Header */}
-        <div style={{ marginBottom: "2.5rem" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 400,
-              fontSize: "clamp(2.5rem, 4vw, 4rem)",
-              lineHeight: 1.1,
-              color: "var(--color-cream)",
-              letterSpacing: "-0.02em",
-              margin: 0,
-            }}
-          >
+        {/* Header in one row: the title on the left, a one-line blurb and the
+            link to older boards on the right, so the photos start sooner. */}
+        <div className="mood-head">
+          <h2 className="mood-title">
             <span lang="ne" style={{ fontFamily: "var(--font-devanagari)" }}>
               मूड बोर्ड
             </span>
-            <span
-              style={{
-                display: "block",
-                fontFamily: "var(--font-body)",
-                fontSize: "0.875rem",
-                fontWeight: 300,
-                color: "var(--color-marigold)",
-                letterSpacing: "0.04em",
-                marginTop: "0.6rem",
-              }}
-            >
-              mood board
-            </span>
+            <span className="mood-sub">mood board</span>
           </h2>
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "1rem",
-              lineHeight: 1.7,
-              color: "var(--color-cream-dim)",
-              marginTop: "1.5rem",
-              marginBottom: 0,
-              maxWidth: "38rem",
-            }}
-          >
-            welcome to my brain, time of the month ~ this round is the last of
-            summer refusing to leave! nothing here is in order, and half of it
-            happened after dark.
-          </p>
+          <div className="mood-head-aside">
+            <p className="mood-blurb">
+              turns out Kanye was right about summer Chi ~
+              <br />
+              here&rsquo;s mine in a scroll: lake days, late nights,
+              <br />
+              &amp; outfits that got their mileage!
+            </p>
+            {/* Placeholder — swap the span for <a href="..."> once older
+                boards have a page. */}
+            <span className="mood-more">moodier boards →</span>
+          </div>
         </div>
 
-        {/* Placeholder — swap the span for <a href="..."> once the summer '26 page exists. */}
-        <div style={{ marginBottom: "2.5rem" }}>
-          <span
-            onMouseEnter={() => setLinkHovered(true)}
-            onMouseLeave={() => setLinkHovered(false)}
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "0.9375rem",
-              color: linkHovered
-                ? "var(--color-marigold)"
-                : "var(--color-cream-dim)",
-              borderBottom: "1px solid",
-              borderColor: linkHovered
-                ? "var(--color-marigold)"
-                : "var(--color-border)",
-              paddingBottom: "0.15rem",
-              cursor: "pointer",
-              transition: "color 0.2s ease, border-color 0.2s ease",
-            }}
-          >
-            click for moodier boards
-          </span>
-        </div>
-
-        {/* Mosaic — every cell filled, photos cropped to fit. */}
+        {variant === "reel" ? (
+          <MoodReel items={MOOD_BOARD_IMAGES} season="summer ’26" />
+        ) : (
+        /* Mosaic — every cell filled, photos cropped to fit. */
         <div className="mood-mosaic">
           {MOOD_BOARD_IMAGES.map((item, i) => (
             <div
@@ -1122,7 +1232,7 @@ function MoodBoard() {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  objectPosition: item.position,
+                  objectPosition: item.focus,
                   display: "block",
                   // One vintage grade across every tile, so ten photos taken
                   // on different days and cameras sit as one set. Hover eases
@@ -1131,7 +1241,8 @@ function MoodBoard() {
                     hovered === i
                       ? "sepia(0.16) saturate(1.16) contrast(1.06) brightness(1.02) hue-rotate(-4deg)"
                       : "sepia(0.36) saturate(1.05) contrast(1.05) brightness(0.95) hue-rotate(-8deg)",
-                  transform: hovered === i ? "scale(1.03)" : "none",
+                  transformOrigin: item.focus ?? "center",
+                  transform: `scale(${(item.zoom ?? 1) * (hovered === i ? 1.03 : 1)})`,
                 }}
               />
               {/* Warm wash that burns off as you point at it. */}
@@ -1175,8 +1286,6 @@ function MoodBoard() {
                         padding: "0.28rem 0.55rem",
                         borderRadius: "2px",
                         border: "1px solid rgba(248,236,224,0.16)",
-                        backgroundColor: "rgba(28,8,6,0.62)",
-                        backdropFilter: "blur(3px)",
                         fontFamily: "var(--font-body)",
                         fontSize: "0.6875rem",
                         lineHeight: 1.2,
@@ -1196,11 +1305,23 @@ function MoodBoard() {
                           color: "var(--color-marigold)",
                         }}
                       >
-                        {credit.item}
+                        {/* With no brand to carry the link, the item does. */}
+                        {linkCredit(credit) && !credit.brand ? (
+                          <a
+                            href={credit.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "inherit" }}
+                          >
+                            {credit.item}
+                          </a>
+                        ) : (
+                          credit.item
+                        )}
                       </span>
                       {credit.brand ? (
                         <span style={{ color: "var(--color-cream)" }}>
-                          {credit.href ? (
+                          {linkCredit(credit) ? (
                             <a
                               href={credit.href}
                               target="_blank"
@@ -1242,11 +1363,12 @@ function MoodBoard() {
                   pointerEvents: "none",
                 }}
               >
-                {item.caption}
+                {item.captionContent ?? item.caption}
               </div>
             </div>
           ))}
         </div>
+        )}
       </div>
     </section>
   )
@@ -1442,16 +1564,47 @@ function Footer({ onHome }: { onHome: () => void }) {
             color: "var(--color-cream-dim)",
           }}
         >
-          © 2026 · made with love by roro &amp; nush
+          made by roro
         </span>
       </div>
     </footer>
   )
 }
 
+/* Sign-ups are relayed by FormSubmit (formsubmit.co): no backend, no account.
+   The first submission sends a one-time activation email to this address;
+   nothing is delivered until that link is clicked. */
+const SIGNUP_INBOX = "anushka8823@icloud.com"
+
 function EmailPopup() {
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">(
+    "idle",
+  )
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus("sending")
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${SIGNUP_INBOX}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          _subject: "New sign-up from the site ✦",
+          _template: "table",
+          _captcha: "false",
+        }),
+      })
+      setStatus(res.ok ? "done" : "error")
+    } catch {
+      setStatus("error")
+    }
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => setOpen(true), 1000)
@@ -1574,12 +1727,29 @@ function EmailPopup() {
           chiya-fuelled rambles. ☕
         </p>
 
+        {status === "done" ? (
+          <p
+            role="status"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontStyle: "italic",
+              fontSize: "1.35rem",
+              lineHeight: 1.3,
+              color: "var(--color-teal)",
+              margin: 0,
+            }}
+          >
+            You're in! Chiya's on me. ✦
+          </p>
+        ) : (
         <form
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={onSubmit}
           style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}
         >
           <input
             type="email"
+            required
+            disabled={status === "sending"}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@somewhere.cool"
@@ -1599,6 +1769,7 @@ function EmailPopup() {
           />
           <button
             type="submit"
+            disabled={status === "sending"}
             style={{
               flex: "0 0 auto",
               fontFamily: "var(--font-body)",
@@ -1625,9 +1796,24 @@ function EmailPopup() {
                 "4px 4px 0 var(--color-paper-ink)"
             }}
           >
-            Count me in →
+            {status === "sending" ? "Sending…" : "Count me in →"}
           </button>
+          {status === "error" && (
+            <p
+              role="alert"
+              style={{
+                flexBasis: "100%",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.85rem",
+                color: "var(--color-terracotta)",
+                margin: 0,
+              }}
+            >
+              Hmm, that didn't go through. Mind trying again?
+            </p>
+          )}
         </form>
+        )}
 
         <button
           onClick={() => setOpen(false)}
@@ -1644,7 +1830,9 @@ function EmailPopup() {
             textUnderlineOffset: "3px",
           }}
         >
-          nah, I'll keep lurking
+          {status === "done"
+            ? "धन्यवाद! now go snoop around →"
+            : "nah, I'll keep lurking"}
         </button>
       </div>
     </div>
@@ -1741,7 +1929,7 @@ export default function App() {
       />
       {post ? (
         <main style={{ paddingTop: "5.25rem" }}>
-          <BlogPage post={post} onHome={scrollHome} />
+          <BlogPage post={post} />
         </main>
       ) : (
         <>

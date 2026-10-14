@@ -67,6 +67,9 @@ html {
 
 body {
   font-family: var(--font-body);
+  /* Full-width post bands span 100vw, which includes the scrollbar on some
+     systems; clip rather than let that open a sideways scroll. */
+  overflow-x: clip;
   background-color: var(--color-earth);
   background-image: linear-gradient(
     to bottom,
@@ -180,6 +183,61 @@ body {
   line-clamp: 3;
   overflow: hidden;
 }
+/* A coming-soon date sits quiet until the card is hovered (or tapped), then
+   a marigold-to-saffron shimmer sweeps across it under a soft glow. */
+.ghar-soon-date {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-border) 0%,
+    var(--color-border) 35%,
+    var(--color-marigold) 45%,
+    var(--color-cream) 50%,
+    var(--color-saffron) 55%,
+    var(--color-border) 65%,
+    var(--color-border) 100%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition:
+    filter 0.3s ease,
+    letter-spacing 0.3s ease;
+}
+.ghar-card:hover .ghar-soon-date,
+.ghar-card:active .ghar-soon-date {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-saffron) 0%,
+    var(--color-saffron) 35%,
+    var(--color-marigold) 45%,
+    var(--color-cream) 50%,
+    var(--color-marigold) 55%,
+    var(--color-saffron) 65%,
+    var(--color-saffron) 100%
+  );
+  background-size: 250% 100%;
+  animation: ghar-soon-shimmer 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 222, 168, 0.55));
+  letter-spacing: 0.06em;
+}
+@keyframes ghar-soon-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ghar-card:hover .ghar-soon-date,
+  .ghar-card:active .ghar-soon-date {
+    animation: none;
+    background-position: 50% 0;
+  }
+}
+
 /* Narrow enough and that column would be a stripe, so stack it instead. */
 @media (max-width: 720px) {
   .ghar-card {
@@ -194,7 +252,7 @@ body {
 /* Mood board: a fixed mosaic rather than a masonry. Masonry left ragged gaps
    at the foot of each column; here every cell is filled and the photos are
    cropped to fit. Row heights still vary, so the long/short rhythm survives.
-   10 photos, 3 columns: items 4 and 10 run double-width, which makes
+   11 photos, 3 columns: item 4 runs double-width, which makes
    3 + 3 + 3 + 3 = four complete rows with nothing left over. */
 .mood-mosaic {
   display: grid;
@@ -206,27 +264,660 @@ body {
     clamp(185px, 20vw, 275px);
   gap: 1.75rem;
 }
-.mood-mosaic > *:nth-child(4),
-.mood-mosaic > *:nth-child(10) {
+.mood-mosaic > *:nth-child(4) {
   grid-column: span 2;
 }
 
-/* Two columns: 10 photos make five clean rows, so no item needs to span. */
+/* Two columns: the last of the 11 photos runs full width to close the grid
+   on six clean rows. */
 @media (max-width: 1000px) {
   .mood-mosaic {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: none;
     grid-auto-rows: clamp(190px, 30vw, 300px);
   }
-  .mood-mosaic > *:nth-child(4),
-  .mood-mosaic > *:nth-child(10) {
+  .mood-mosaic > *:nth-child(4) {
     grid-column: span 1;
+  }
+  .mood-mosaic > *:nth-child(11) {
+    grid-column: span 2;
   }
 }
 @media (max-width: 620px) {
   .mood-mosaic {
     grid-template-columns: 1fr;
     grid-auto-rows: clamp(240px, 62vw, 340px);
+  }
+  .mood-mosaic > *:nth-child(11) {
+    grid-column: span 1;
+  }
+}
+
+/* 2 Cents intro: one line wherever it fits, wrapping only on narrow screens. */
+@media (min-width: 900px) {
+  .twocents-intro {
+    white-space: nowrap;
+  }
+}
+
+/* 2 Cents card note: a first-person note about when the post was written,
+   the line that set it off picked out in marigold, and a saffron hook under
+   it that nudges on hover. The whole thing links to the post on Instagram. */
+.twocents-note {
+  display: block;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(248, 236, 224, 0.05);
+  text-decoration: none;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+.twocents-note-date {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-saffron);
+}
+.twocents-note-text {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--color-cream-dim);
+}
+.twocents-note-lyric {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 1.35;
+  color: var(--color-marigold);
+  transition: color 0.25s ease;
+}
+.twocents-note:hover .twocents-note-lyric,
+.twocents-note:focus-visible .twocents-note-lyric {
+  color: var(--color-cream);
+}
+.twocents-note-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  padding: 0.6rem 1rem;
+  border-radius: 2px;
+  background-color: var(--color-saffron);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-earth);
+  box-shadow: 0 6px 16px -8px rgba(28, 8, 6, 0.8);
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+/* The arrow is drawn here so the hook text can stay as written. */
+.twocents-note-go::after {
+  content: "→";
+  font-size: 0.9rem;
+  transition: transform 0.25s ease;
+}
+.twocents-note:hover,
+.twocents-note:focus-visible {
+  background: rgba(248, 236, 224, 0.1);
+}
+.twocents-note:hover .twocents-note-go,
+.twocents-note:focus-visible .twocents-note-go {
+  background-color: var(--color-marigold);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -8px rgba(240, 120, 40, 0.6);
+}
+.twocents-note:hover .twocents-note-go::after,
+.twocents-note:focus-visible .twocents-note-go::after {
+  transform: translateX(4px);
+}
+.twocents-note:focus-visible {
+  outline: 2px solid var(--color-marigold);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .twocents-note-go,
+  .twocents-note-go::after {
+    transition: none;
+  }
+  .twocents-note:hover .twocents-note-go,
+  .twocents-note:hover .twocents-note-go::after {
+    transform: none;
+  }
+}
+
+/* Mood board header: title left, blurb and link right, on one row. Stacks
+   on a phone. */
+.mood-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+.mood-head-aside {
+  max-width: 24rem;
+  text-align: right;
+}
+.mood-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-cream);
+}
+.mood-sub {
+  display: block;
+  margin-top: 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-marigold);
+}
+.mood-blurb {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--color-cream-dim);
+}
+.mood-more {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.mood-more:hover {
+  color: var(--color-marigold);
+  border-color: var(--color-marigold);
+}
+
+/* Desktop: the header speaks the same type as the other home sections — big
+   display title, light body-font subtitle, body-font blurb — with a rule
+   under it like Ghar's. */
+@media (min-width: 641px) {
+  .mood-head {
+    padding-bottom: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .mood-title {
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    line-height: 1.1;
+  }
+  .mood-sub {
+    font-size: 0.875rem;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+  .mood-blurb {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .mood-more {
+    font-size: 0.9375rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--color-cream-dim);
+  }
+}
+@media (max-width: 640px) {
+  .mood-head {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+  .mood-head-aside {
+    text-align: center;
+  }
+}
+
+/* ---------- Mood board, "reel" layout ----------
+   A horizontal strip with depth. Each card gets --d (signed distance from
+   the middle, in card widths) and --ad (the same, unsigned) from the script
+   on every scroll frame; the turn and scale run off those, so the card in
+   front faces you flat and the rest turn away into the page. Every photo
+   keeps its own 3:4 shape, uncropped, and every card but the one in front
+   sits at one even dark shade. */
+.reel {
+  position: relative;
+}
+.reel-scroller {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  perspective: 1400px;
+  cursor: grab;
+  outline: none;
+  /* Cards melt into the page at both ends instead of being cut off. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 9%,
+    #000 91%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 9%,
+    #000 91%,
+    transparent 100%
+  );
+}
+.reel-scroller::-webkit-scrollbar {
+  display: none;
+}
+/* The side room that lets the first and last card reach the middle lives on
+   the scroller itself, not the track inside it: a max-content track works
+   out its width before percentage padding resolves, so padding there never
+   adds scroll room at the far end. --pad is set per screen size below. */
+.reel {
+  --pad: calc(50% - clamp(8.5rem, 13vw, 11.5rem));
+}
+.reel-scroller {
+  padding-inline: var(--pad);
+}
+.reel-scroller.is-dragging {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  cursor: grabbing;
+}
+.reel-scroller:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-marigold);
+}
+.reel-track {
+  display: flex;
+  align-items: center;
+  padding-block: 3rem;
+  width: max-content;
+  transform-style: preserve-3d;
+}
+.reel-card {
+  --d: 0;
+  --ad: 0;
+  position: relative;
+  flex: none;
+  width: clamp(17rem, 26vw, 23rem);
+  aspect-ratio: 3 / 4;
+  margin: 0 1.1rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  background: rgba(248, 236, 224, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transform: rotateY(calc(var(--d) * -28deg))
+    scale(calc(1 - var(--ad) * 0.12));
+  box-shadow: 0 24px 50px -24px rgba(28, 8, 6, 0.9);
+  transition:
+    box-shadow 0.4s ease,
+    border-color 0.4s ease;
+  will-change: transform;
+}
+.reel-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  /* One even dark shade on every card but the one in front, warmed toward
+     the page's browns; the one in front is shown as taken. */
+  filter: sepia(0.3) saturate(0.85) brightness(0.45);
+  transition: filter 0.4s ease;
+}
+.reel-card.is-active {
+  border-color: var(--color-marigold);
+  box-shadow:
+    0 0 0 1px var(--color-marigold),
+    0 30px 60px -20px rgba(240, 120, 40, 0.55);
+}
+.reel-card.is-active img {
+  filter: none;
+}
+.reel-card:focus-visible {
+  outline: 2px solid var(--color-marigold);
+  outline-offset: 3px;
+}
+
+/* Caption bar under the reel: steppers either side of the count, caption
+   and credits for the card in front. */
+.reel-caption {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 40rem;
+  margin: 0.5rem auto 0;
+  text-align: center;
+}
+.reel-caption-text {
+  min-height: 5.5rem;
+}
+.reel-count {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--color-saffron);
+}
+.reel-line {
+  margin: 0.45rem 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.125rem, 2vw, 1.4rem);
+  line-height: 1.3;
+  color: var(--color-cream);
+}
+.reel-credits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+}
+.reel-credit {
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(248, 236, 224, 0.16);
+  border-radius: 2px;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-marigold);
+}
+.reel-credit b {
+  font-weight: 400;
+  color: var(--color-cream);
+  text-transform: none;
+  letter-spacing: 0;
+}
+/* No underline; the link warms to marigold on hover instead. */
+.reel-credit a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.reel-credit a:hover,
+.reel-credit a:focus-visible {
+  color: var(--color-marigold);
+}
+.reel-step {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: none;
+  color: var(--color-cream);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+.reel-step:hover:not(:disabled),
+.reel-step:focus-visible {
+  border-color: var(--color-marigold);
+  color: var(--color-marigold);
+  background-color: rgba(248, 236, 224, 0.06);
+}
+.reel-step:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.reel-progress {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 1.1rem;
+}
+.reel-progress span {
+  width: 1.1rem;
+  height: 2px;
+  background: var(--color-border);
+  transition:
+    background-color 0.3s ease,
+    width 0.3s ease;
+}
+.reel-progress span.is-on {
+  width: 2.2rem;
+  background: var(--color-marigold);
+}
+
+/* End cards: an opening card before the first photo and a closing one after
+   the last, so the reel never starts or ends on an empty stretch. Text on a
+   dashed frame, turned in toward the photos like the cards beside it. Hidden
+   on a phone, where there is no empty stretch to fill. */
+.reel-end {
+  display: none;
+}
+@media (min-width: 1100px) {
+  .reel-end {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.9rem;
+    width: var(--end-w);
+    aspect-ratio: 3 / 4;
+    margin: 0 1.5rem;
+    padding: 2rem 1.75rem;
+    border: 1px dashed rgba(248, 236, 224, 0.35);
+    background:
+      radial-gradient(
+        120% 80% at 50% 0%,
+        rgba(247, 191, 99, 0.12),
+        transparent 60%
+      ),
+      rgba(28, 8, 6, 0.25);
+  }
+  .reel-end--start {
+    text-align: right;
+    align-items: flex-end;
+    transform: rotateY(24deg) scale(0.92);
+    transform-origin: right center;
+  }
+  .reel-end--finish {
+    text-align: left;
+    align-items: flex-start;
+    transform: rotateY(-24deg) scale(0.92);
+    transform-origin: left center;
+  }
+  .reel-end-kicker {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-saffron);
+  }
+  .reel-end-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+    line-height: 1.15;
+    color: var(--color-cream);
+  }
+  .reel-end-hint,
+  .reel-end-link {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-cream-dim);
+  }
+  .reel-end-arrow {
+    display: inline-block;
+    color: var(--color-marigold);
+    animation: reel-nudge 1.6s ease-in-out infinite;
+  }
+  @keyframes reel-nudge {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(5px);
+    }
+  }
+  .reel-end-link {
+    padding-bottom: 0.15rem;
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .reel-end-link:hover {
+    color: var(--color-marigold);
+    border-color: var(--color-marigold);
+  }
+  .reel-end-back {
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--color-border);
+    background: none;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-saffron);
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .reel-end-back:hover,
+  .reel-end-back:focus-visible {
+    border-color: var(--color-marigold);
+    color: var(--color-marigold);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reel-end-arrow {
+    animation: none;
+  }
+  .reel-end--start,
+  .reel-end--finish {
+    transform: none;
+  }
+}
+/* The card is sized by the screen's height as well as its width, so the
+   whole photo and the caption bar under it always fit in view together
+   (about 17.5rem is left for the caption, previews and breathing room). */
+@media (min-width: 641px) {
+  .reel {
+    --card-w: min(clamp(20rem, 30vw, 27.5rem), calc((100svh - 17.5rem) * 0.75));
+  }
+  .reel {
+    --pad: calc(50% - var(--card-w) / 2);
+  }
+  .reel-track {
+    padding-block: 1.5rem;
+  }
+}
+/* Wide screens get the end cards. --half is half the reel's width (the
+   section is 1200px wide less 2rem gutters each side). Each end card takes
+   whatever is left beside the centred photo, minus its margins and a little
+   slack, so the first and last photo can still reach the middle; the track
+   padding shrinks by the same amount. */
+@media (min-width: 1100px) {
+  .reel {
+    --half: min(568px, 50vw - 2rem);
+    --end-w: min(
+      calc(var(--card-w) * 0.72),
+      calc(var(--half) - var(--card-w) / 2 - 4rem)
+    );
+  }
+  .reel {
+    --pad: calc(50% - var(--card-w) / 2 - var(--end-w) - 3rem);
+  }
+  .reel-card {
+    width: var(--card-w);
+    margin: 0 1.5rem;
+  }
+  .reel-caption {
+    max-width: 46rem;
+  }
+}
+
+/* Phone: bigger cards relative to the screen, a shallower turn so swiping
+   stays readable, steppers kept as thumb targets. */
+@media (max-width: 640px) {
+  .reel {
+    --card-w: min(62vw, calc((100svh - 17rem) * 0.75));
+  }
+  .reel {
+    --pad: calc(50% - var(--card-w) / 2);
+  }
+  .reel-track {
+    padding-block: 2rem;
+  }
+  .reel-card {
+    width: var(--card-w);
+    margin: 0 0.5rem;
+    transform: rotateY(calc(var(--d) * -22deg))
+      scale(calc(1 - var(--ad) * 0.1));
+  }
+  .reel-scroller {
+    cursor: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .reel-caption {
+    gap: 0.75rem;
+  }
+}
+
+/* Reduced motion: no 3D turning or smooth gliding, just a flat strip. */
+@media (prefers-reduced-motion: reduce) {
+  .reel-scroller {
+    scroll-behavior: auto;
+  }
+  .reel-card {
+    transform: none;
+  }
+  .reel-card img,
+  .reel-step,
+  .reel-progress span {
+    transition: none;
   }
 }
 
@@ -264,12 +955,11 @@ body {
 }
 .mood-credit a {
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
+  transition: color 0.2s ease;
 }
 .mood-credit a:hover,
 .mood-credit a:focus-visible {
-  border-bottom-color: var(--color-marigold);
+  color: var(--color-marigold) !important;
 }
 @media (prefers-reduced-motion: reduce) {
   .mood-credits,
@@ -326,47 +1016,188 @@ body {
   }
 }
 
-/* The hero footage dissolves into the page instead of being painted over with
-   a colour that has to match it. The ground behind the text column is the
-   document-length pour, so any fixed colour drifts out of step by the time it
-   reaches the hero and leaves a hard line down the join. Masking lets whatever
-   the pour happens to be there show through instead — two nested masks rather
-   than one composited pair, which keeps it working without mask-composite.
-   Outer fades the foot of the clip, inner cuts the diagonal under the
-   headline. */
-.hero-media,
-.hero-media-inner {
+/* The hero footage fills the whole section behind the text and dissolves
+   into the page at its foot instead of stopping on a hard edge. The ground
+   below is the document-length pour, so any fixed colour would drift out of
+   step; masking lets whatever the pour happens to be there show through. */
+.hero-media {
   position: absolute;
   inset: 0;
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.5) 10%, #000 26%);
+  mask-image: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.5) 10%, #000 26%);
 }
-.hero-media {
-  -webkit-mask-image: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.5) 12%, #000 32%);
-  mask-image: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.5) 12%, #000 32%);
+/* Darkens the text side so the cream copy holds over bright footage. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(45, 10, 6, 0.72) 0%,
+    rgba(45, 10, 6, 0.55) 38%,
+    rgba(45, 10, 6, 0.15) 72%,
+    rgba(45, 10, 6, 0) 100%
+  );
 }
-.hero-media-inner {
-  -webkit-mask-image: linear-gradient(
-    105deg,
-    transparent 0%,
-    transparent 12%,
-    rgba(0, 0, 0, 0.12) 22%,
-    rgba(0, 0, 0, 0.52) 34%,
-    rgba(0, 0, 0, 0.86) 47%,
-    #000 58%
-  );
-  mask-image: linear-gradient(
-    105deg,
-    transparent 0%,
-    transparent 12%,
-    rgba(0, 0, 0, 0.12) 22%,
-    rgba(0, 0, 0, 0.52) 34%,
-    rgba(0, 0, 0, 0.86) 47%,
-    #000 58%
-  );
+
+/* Phone-only hero title; shown inside the 640px query below. */
+.hero-lines-mobile {
+  display: none;
+}
+
+/* Phone layout for the header and hero. The name goes, leaving the three
+   sections spread across the bar; the three buttons under the intro go (the
+   bar already does that job); and the footage stays full-bleed with its
+   scrim rising from the foot, where the text sits. */
+@media (max-width: 640px) {
+  .nav-name {
+    display: none;
+  }
+  .nav-inner {
+    justify-content: center !important;
+    padding: 0 1rem !important;
+  }
+  .nav-links {
+    width: 100%;
+    justify-content: space-around;
+    gap: 0 !important;
+  }
+  .hero-ctas {
+    display: none !important;
+  }
+  /* Phone title: the name leads as a big italic display line in marigold
+     with a thin fading rule under it, and the three title lines sit below it
+     smaller and airier, Devanagari picked out in marigold. */
+  .hero-title {
+    text-align: center;
+    font-size: 15px !important;
+    line-height: 1.95 !important;
+  }
+  .hero-kicker {
+    font-family: var(--font-display) !important;
+    font-style: italic;
+    font-weight: 500 !important;
+    font-size: 2.75rem !important;
+    line-height: 1 !important;
+    letter-spacing: -0.015em !important;
+    text-transform: none !important;
+    color: var(--color-marigold) !important;
+    text-shadow: 0 2px 18px rgba(240, 120, 40, 0.35);
+    margin-bottom: 0.4rem !important;
+  }
+  .hero-kicker::after {
+    content: "";
+    display: block;
+    width: 6rem;
+    height: 1px;
+    margin: 0.9rem auto 0.5rem;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-saffron),
+      transparent
+    );
+  }
+  .hero-title .hero-gloss {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: var(--color-cream-dim) !important;
+  }
+  .hero-title .hero-dev {
+    font-size: 14.5px !important;
+    color: var(--color-marigold);
+  }
+  /* Swap the glossed desktop lines for the short funky phone line. */
+  .hero-lines-desktop {
+    display: none;
+  }
+  .hero-lines-mobile {
+    display: block;
+    font-style: italic;
+  }
+  .hm-line {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--color-cream);
+  }
+  .hm-dev {
+    display: inline-block;
+    font-family: var(--font-devanagari);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--color-marigold);
+  }
+  .hm-tilt-l {
+    transform: rotate(-6deg) translateY(-1px);
+  }
+  .hm-tilt-r {
+    transform: rotate(5deg) translateY(1px);
+  }
+  .hm-comma {
+    color: var(--color-saffron);
+  }
+  .hm-outfits {
+    font-weight: 400;
+    text-decoration: underline wavy var(--color-saffron);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+  }
+  .hm-amp {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--color-saffron);
+    transform: rotate(-8deg);
+  }
+  .hero-text {
+    min-height: 0 !important;
+    padding: 7rem 1.5rem 3.25rem !important;
+  }
+  /* Runs through the copy once the text spans the full width. */
+  .hero-label {
+    display: none;
+  }
+  /* Shorter frame so the footage crops closer to square. */
+  .hero {
+    min-height: 30rem !important;
+  }
+  /* On a phone the text sits at the foot of a tall frame, so the scrim
+     rises from the bottom instead of the side. */
+  .hero-scrim {
+    background: linear-gradient(
+      to top,
+      rgba(45, 10, 6, 0.8) 0%,
+      rgba(45, 10, 6, 0.62) 45%,
+      rgba(45, 10, 6, 0.12) 80%,
+      rgba(45, 10, 6, 0) 100%
+    );
+  }
 }
 
 /* Post head. */
 .post-head {
-  margin-top: 2.5rem;
+  margin-top: 1rem;
+}
+
+/* One treatment for every photo in a post — mood board, section bands and
+   the listen card: warmed toward the page's browns and dimmed so nothing
+   glares off the dark background. Hovering a photo shows it as taken, with
+   no filter at all. */
+.post-mosaic,
+.post-band,
+.post-music {
+  --photo-rest: sepia(0.22) saturate(0.78) brightness(0.58) contrast(1.04);
+}
+.post-mosaic .mood-tile img {
+  filter: var(--photo-rest);
+}
+.post-mosaic .mood-tile.is-lit img {
+  filter: none;
 }
 
 /* Prose rows: the heading sits out in the left margin and the text runs beside
@@ -385,16 +1216,21 @@ body {
   }
 }
 
-/* Justified prose with hyphenation on, because justifying without it opens
-   rivers at this measure. First paragraph of each block sits flush, every one
-   after it takes the indent. */
+/* Justified prose, words never split across lines. `text-wrap: pretty`
+   evens out the last lines where the browser supports it. On a phone the
+   column is too narrow to justify without hyphens opening big gaps, so it
+   goes flush left there instead. Paragraphs sit flush, no first-line
+   indent; the gap between them does the separating. */
 .post-prose p {
   text-align: justify;
-  -webkit-hyphens: auto;
-  hyphens: auto;
+  -webkit-hyphens: manual;
+  hyphens: manual;
+  text-wrap: pretty;
 }
-.post-prose p + p {
-  text-indent: 1.75rem;
+@media (max-width: 600px) {
+  .post-prose p {
+    text-align: left;
+  }
 }
 
 /* A post's own mood board: a short strip under the reading column, not the
@@ -409,5 +1245,388 @@ body {
   .post-mosaic {
     grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: clamp(140px, 34vw, 200px);
+  }
+}
+
+/* Square board: every photo cropped to a square in an even grid, so a board
+   of mixed portrait and landscape shots still lines up. Five across by
+   default (a post sets --cols to suit its count: Mool Ghar's 15 make five
+   by three, Bikram Sambat's 12 make six by two), three across on smaller
+   screens. The crop
+   sits a little above centre, where faces tend to be in a family photo. */
+.post-mosaic--square {
+  grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
+  grid-auto-rows: auto;
+  gap: 0.75rem;
+}
+.post-mosaic--square .mood-tile {
+  aspect-ratio: 1 / 1;
+}
+.post-mosaic--square .mood-tile img {
+  object-position: center 35%;
+}
+@media (max-width: 900px) {
+  .post-mosaic--square {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+/* A section with a photo: a full-width band, the photo under a scrim in the
+   page's own browns — the same move as Socials on the home page. The scrim is
+   lighter over the left rail, where only the heading sits, so the picture
+   shows there, and near-solid under the prose so the text keeps its contrast.
+   The photo is muted until you hover the band, like the mood tiles. */
+.post-band {
+  position: relative;
+  isolation: isolate;
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  margin-top: 3.5rem;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+}
+.post-band + .post-band {
+  margin-top: 0;
+  border-top: none;
+}
+.post-band::before,
+.post-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.post-band::before {
+  background: var(--band-image) var(--band-position, center) / cover
+    no-repeat;
+  filter: var(--photo-rest);
+  transition: filter 0.6s ease;
+}
+.post-band:hover::before {
+  filter: none;
+}
+.post-band::after {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(51, 32, 26, 0.45) 0%,
+      rgba(51, 32, 26, 0) 18%,
+      rgba(51, 32, 26, 0) 82%,
+      rgba(51, 32, 26, 0.45) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(51, 32, 26, 0.5) 0%,
+      rgba(51, 32, 26, 0.62) 20%,
+      rgba(51, 32, 26, 0.9) 33%,
+      rgba(51, 32, 26, 0.92) 100%
+    );
+}
+.post-band-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4.5rem 2rem 3.25rem;
+}
+/* In a band the text runs on to the band's right edge instead of stopping at
+   the reading measure, so the space after it matches the space before the
+   heading. */
+.post-band .post-row {
+  grid-template-columns: 15rem minmax(0, 1fr);
+}
+@media (max-width: 900px) {
+  .post-band .post-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.post-band-caption {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: rgba(255, 218, 194, 0.8);
+  text-shadow: 0 1px 6px rgba(28, 8, 6, 0.9);
+}
+@media (max-width: 900px) {
+  .post-band-inner {
+    padding: 3.25rem 2rem 2.25rem;
+  }
+  .post-band::after {
+    background: rgba(51, 32, 26, 0.86);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-band::before {
+    transition: none;
+  }
+  .post-band:hover::before {
+    transform: none;
+  }
+}
+
+/* The post's record: one card, all of it the link. A small "listen while you
+   read" label with three bars bouncing beside it, the title line, and
+   YouTube's red play button on the right. On hover the card warms and the
+   button lifts. */
+.post-music {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid var(--color-border);
+  background-color: rgba(248, 236, 224, 0.05);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.post-music:hover,
+.post-music:focus-visible {
+  border-color: var(--color-marigold);
+  background-color: rgba(248, 236, 224, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -14px rgba(28, 8, 6, 0.9);
+}
+.post-music:focus-visible {
+  outline: 2px solid var(--color-marigold);
+  outline-offset: 3px;
+}
+/* With a photo: a taller card, the picture behind it under a wash that is
+   darkest under the words on the left and lifts toward the right so the
+   photo shows through. The photo warms up and drifts in on hover. */
+.post-music--photo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 8.5rem;
+  padding: 1.5rem;
+  gap: 1.15rem;
+}
+.post-music--photo::before,
+.post-music--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.post-music--photo::before {
+  background: var(--music-image) center 48% / cover no-repeat;
+  filter: var(--photo-rest);
+  transition: filter 0.5s ease;
+}
+.post-music--photo::after {
+  background: linear-gradient(
+    to right,
+    rgba(51, 32, 26, 0.92) 0%,
+    rgba(51, 32, 26, 0.8) 45%,
+    rgba(51, 32, 26, 0.5) 100%
+  );
+}
+.post-music--photo:hover::before,
+.post-music--photo:focus-visible::before {
+  filter: none;
+}
+.post-music--photo .post-music-play {
+  width: 3.25rem;
+  height: 2.32rem;
+}
+.post-music--photo .post-music-line {
+  font-size: 0.9375rem;
+}
+/* YouTube's play button, kept at its own 7:5 proportions. Lifts and
+   brightens a touch on hover. */
+.post-music-play {
+  flex-shrink: 0;
+  display: block;
+  width: 2.75rem;
+  height: 1.96rem;
+  filter: drop-shadow(0 4px 10px rgba(28, 8, 6, 0.45));
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+.post-music-play svg {
+  display: block;
+}
+.post-music:hover .post-music-play,
+.post-music:focus-visible .post-music-play {
+  transform: scale(1.1);
+  filter: drop-shadow(0 6px 14px rgba(255, 0, 0, 0.35));
+}
+.post-music-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-saffron);
+}
+/* On hover the label gives way to a word from our sponsor (not a sponsor). */
+.post-music-tip {
+  display: none;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-size: 0.8125rem;
+  color: var(--color-marigold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.post-music:hover .post-music-label-rest,
+.post-music:focus-visible .post-music-label-rest {
+  display: none;
+}
+.post-music:hover .post-music-tip,
+.post-music:focus-visible .post-music-tip {
+  display: inline;
+}
+.post-music-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 0.7rem;
+}
+.post-music-bars i {
+  display: block;
+  width: 2px;
+  height: 100%;
+  background: var(--color-marigold);
+  transform-origin: bottom;
+  animation: post-music-bar 1.1s ease-in-out infinite;
+}
+.post-music-bars i:nth-child(2) {
+  animation-delay: -0.35s;
+}
+.post-music-bars i:nth-child(3) {
+  animation-delay: -0.7s;
+}
+@keyframes post-music-bar {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+/* Title, artist and note share one line so the card stays a single strip
+   beside the post header; allowed to wrap once the column is narrow. */
+.post-music-line {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-cream-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 900px) {
+  .post-music-line {
+    white-space: normal;
+    overflow: visible;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-music,
+  .post-music-play {
+    transition: none;
+  }
+  .post-music:hover,
+  .post-music:focus-visible,
+  .post-music:hover .post-music-play,
+  .post-music:focus-visible .post-music-play {
+    transform: none;
+  }
+  .post-music--photo::before {
+    transition: none;
+  }
+  .post-music--photo:hover::before,
+  .post-music--photo:focus-visible::before {
+    transform: none;
+  }
+  .post-music-bars i {
+    animation: none;
+    transform: scaleY(0.6);
+  }
+}
+
+/* A caption's crossed-out word: one straight saffron line through it. */
+.caption-strike {
+  text-decoration: line-through;
+  text-decoration-color: var(--color-saffron);
+  text-decoration-thickness: 2px;
+  opacity: 0.75;
+}
+
+/* Phone-only Instagram nudge under the 2 cents row. */
+.twocents-more {
+  display: none;
+}
+
+/* Phone only: the 2 cents columns become a sideways swipe instead of a
+   stack. */
+@media (max-width: 640px) {
+  .twocents-grid {
+    display: flex !important;
+    gap: 1rem !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -2rem;
+    padding: 0 2rem 0.5rem;
+    scroll-padding: 0 2rem;
+    scrollbar-width: none;
+  }
+  .twocents-grid::-webkit-scrollbar {
+    display: none;
+  }
+  /* The CTA closes the section, so the long desktop tail goes. */
+  .twocents-section {
+    padding-bottom: 3.5rem !important;
+  }
+  /* Mool Ghar cards: a slimmer text column, and each title held to one line,
+     sized to the longest one ("No, it does not snow where I am from"). */
+  .ghar-card-body {
+    padding: 1.75rem 1.25rem !important;
+  }
+  .ghar-card-title {
+    white-space: nowrap;
+    font-size: min(1.25rem, calc((100vw - 6.75rem) / 19)) !important;
+  }
+  .twocents-ig-link {
+    display: none !important;
+  }
+  .twocents-more {
+    display: block;
+    margin: 1rem auto 0;
+    max-width: 20rem;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-cream-dim);
+  }
+  .twocents-more a {
+    color: var(--color-saffron);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.15rem;
+  }
+  .twocents-grid > article {
+    flex: 0 0 82%;
+    scroll-snap-align: start;
   }
 }
