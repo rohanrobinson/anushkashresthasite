@@ -907,14 +907,14 @@ function TwoCents() {
 
         {/* Phone-only nudge to the Instagram, under the swipe row. */}
         <p className="twocents-more">
-          My 2 AM brain has more to say. They live on my Insta{" "}
+          My 2 AM brain has more to say. They live on my{" "}
           <a
             href={INSTAGRAM_2CENTS}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="2 cents on Instagram"
           >
-            →
+            Insta →
           </a>
         </p>
       </div>
@@ -1564,7 +1564,7 @@ function Footer({ onHome }: { onHome: () => void }) {
             color: "var(--color-cream-dim)",
           }}
         >
-          made by roro
+          ©{new Date().getFullYear()} Ororo - All Rights Reserved.
         </span>
       </div>
     </footer>
