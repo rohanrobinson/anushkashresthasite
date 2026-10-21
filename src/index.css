@@ -501,6 +501,31 @@ body {
   .mood-head-aside {
     text-align: center;
   }
+  /* Three lines with the ~ on its own between the first two, on every phone
+     (see .phone-fit). The longest line is about 19.8em. */
+  .mood-blurb {
+    --fit-size: 1.125rem;
+    --fit-em: 20.5;
+  }
+  .mood-blurb-tilde {
+    display: block;
+  }
+}
+.mood-blurb-line {
+  display: block;
+}
+
+/* Footer: the name and the copyright on one row on every phone, spaced as on
+   a 430px screen (see .phone-fit). The row is 21.2em of text plus a 1.6em gap
+   at the name's size. */
+.site-footer-row {
+  gap: 1.6em;
+}
+@media (max-width: 640px) {
+  .site-footer-row {
+    --fit-size: 1rem;
+    --fit-em: 23;
+  }
 }
 
 /* ---------- Mood board, "reel" layout ----------
@@ -1272,6 +1297,49 @@ body {
   }
 }
 
+/* Phone carousel for a post that asks for one (Mool Ghar): the board leaves
+   the grid and becomes one swipeable row, running edge to edge past the page
+   gutters. Each photo snaps to the centre with its neighbours peeking in at
+   the sides. Hover doesn't exist on a phone, so captions stay up and the
+   hover scaling is switched off (it would clip inside the scroller).
+   Desktop keeps the grid. */
+.post-carousel-count {
+  display: none;
+}
+@media (max-width: 640px) {
+  .post-mosaic--carousel {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-inline: -2rem;
+    padding: 0.5rem 12vw;
+  }
+  .post-mosaic--carousel::-webkit-scrollbar {
+    display: none;
+  }
+  .post-mosaic--carousel .mood-tile {
+    flex: 0 0 76vw;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    transform: none !important;
+  }
+  .post-mosaic--carousel .mood-caption {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    font-size: 0.8125rem !important;
+  }
+  .post-carousel-count {
+    display: block;
+    margin: 0.85rem 0 0;
+    text-align: center;
+  }
+}
+
 /* A section with a photo: a full-width band, the photo under a scrim in the
    page's own browns — the same move as Socials on the home page. The scrim is
    lighter over the left rail, where only the heading sits, so the picture
@@ -1323,6 +1391,92 @@ body {
       rgba(51, 32, 26, 0.9) 33%,
       rgba(51, 32, 26, 0.92) 100%
     );
+}
+/* Footage instead of a still: it sits where ::before would, under the same
+   scrim, muted the same way until the band is hovered. */
+.post-band-video {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: var(--photo-rest);
+  transition: filter 0.6s ease;
+}
+.post-band:hover .post-band-video {
+  filter: none;
+}
+/* The opening band, header and intro together: pulled up over the article's
+   top padding so the footage starts at the nav, with the header sitting where
+   it does on a post without one. The listen card keeps its usual measure
+   rather than stretching to the band's edge. */
+.post-band--top {
+  margin-top: -2.5rem;
+  border-top: none;
+}
+.post-band--top .post-band-inner {
+  padding-top: 3.5rem;
+}
+.post-band--top .post-head {
+  margin-top: 0;
+  grid-template-columns: 15rem minmax(0, 40rem);
+}
+@media (max-width: 900px) {
+  .post-band--top .post-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The Patan clip is portrait, and what matters in it (the pagoda whole, and
+   the straight road of people below it) is a portrait slice from about 42%
+   to 96% of its height. A wide band cropped to cover would show only a thin
+   strip of sky and skyline, so on a wide screen the sharp copy is framed on
+   that slice and sits in the open left of the band, fading out to the right,
+   with a blurred copy carrying the movement across the rest. On a phone the
+   band is tall enough for the clip to cover it nearly whole, so one copy,
+   nudged right to keep the pagoda in. */
+.post-band-video--frame {
+  display: none;
+}
+.post-band--top .post-band-video--fill {
+  object-position: 72% 50%;
+}
+@media (min-width: 901px) {
+  .post-band--top .post-band-video--fill {
+    object-position: 50% 78%;
+    filter: var(--photo-rest) blur(18px);
+    transform: scale(1.1);
+  }
+  .post-band--top:hover .post-band-video--fill {
+    filter: blur(18px);
+  }
+  .post-band-video--frame {
+    display: block;
+    right: auto;
+    width: auto;
+    aspect-ratio: 0.82;
+    object-position: 100% 91%;
+    mask-image: linear-gradient(to right, #000 78%, transparent);
+  }
+  /* Light over the framed clip, dark from where the prose starts. */
+  .post-band--top::after {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(51, 32, 26, 0.45) 0%,
+        rgba(51, 32, 26, 0) 18%,
+        rgba(51, 32, 26, 0) 82%,
+        rgba(51, 32, 26, 0.45) 100%
+      ),
+      linear-gradient(
+        to right,
+        rgba(51, 32, 26, 0.2) 0,
+        rgba(51, 32, 26, 0.3) 360px,
+        rgba(51, 32, 26, 0.88) 500px,
+        rgba(51, 32, 26, 0.92) 100%
+      );
+  }
 }
 .post-band-inner {
   max-width: 1200px;
@@ -1628,5 +1782,30 @@ body {
   .twocents-grid > article {
     flex: 0 0 82%;
     scroll-snap-align: start;
+  }
+}
+
+/* ---------- Phone text parity ----------
+   Text marked .phone-fit reads the same on every phone: the same lines,
+   broken in the same places, in the same proportions as on the reference
+   phone (iPhone 14 Pro Max, 430px wide). The author sets the line breaks;
+   the screen only sets the size. Nothing inside wraps, and the whole block
+   shrinks with the screen until its widest line fits between the gutters,
+   never growing past its designed size.
+
+   Each use supplies, inside a max-width: 640px rule:
+     --fit-size    the designed font-size (what a 430px phone shows)
+     --fit-em      the widest line, in ems of that size, plus about 3% slack
+     --fit-gutter  the horizontal padding around it, both sides (default 4rem)
+   Children size themselves in em, not rem, so they scale together.
+
+   Kept last in the file so it wins over a component's own font-size. */
+@media (max-width: 640px) {
+  .phone-fit {
+    white-space: nowrap;
+    font-size: min(
+      var(--fit-size),
+      calc((100vw - var(--fit-gutter, 4rem)) / var(--fit-em))
+    );
   }
 }

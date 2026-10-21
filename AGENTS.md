@@ -34,6 +34,10 @@ This project uses **Tailwind CSS v4** through the `@tailwindcss/vite` plugin con
 
 `src/main.tsx` imports `src/index.css`, so global font wiring belongs in `src/index.css`. Keep CSS `@import` statements first, then add any `@font-face` rules and font-family defaults there.
 
+### Phone text parity
+
+Short designed text (headings, taglines, blurbs, footer and label rows) must read the same on every smartphone as on the reference phone, an iPhone 14 Pro Max at 430px: same line breaks, same proportions, scaled down on narrower phones rather than re-wrapped. This is done with the `.phone-fit` utility at the end of `src/index.css`. Follow the `phone-text-parity` skill in `.claude/skills/` for any text or styling change that shows on phones, and verify with its `check-phones.mjs` script. Running prose (blog paragraphs) wraps naturally and is exempt.
+
 ## Code quality
 
 - Use double quotes for strings containing apostrophes (`"We're here to help"`), or escape them in single-quoted strings. An unescaped apostrophe in a single-quoted string breaks the build.

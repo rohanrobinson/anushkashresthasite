@@ -12,6 +12,8 @@ import gharHimalHome from "./assets/ghar/himal-home-diyo.jpg";
 import gharIhi from "./assets/ghar/ihi-with-baba.jpg";
 import gharBahra from "./assets/ghar/bahra-with-baba.jpg";
 import musicRosePuja from "./assets/ghar/music-rose-puja.jpg";
+import patanAerialVideo from "./assets/hero/patan-durbar-aerial.mp4";
+import patanAerialPoster from "./assets/hero/patan-durbar-aerial.jpg";
 import gharFacade from "./assets/ghar/mool-ghar-facade.jpg";
 import gharPujaThali from "./assets/ghar/puja-thali-rose.jpg";
 import moodNewarTattoo from "./assets/mood/01-newar-tattoo.jpg";
@@ -72,6 +74,14 @@ export type BlogPost = {
     note: string;
   };
   intro: ReactNode[];
+  /* Optional looping footage behind the header and intro. It fills one
+     full-width band the way a section photo does; `poster` shows while it
+     loads and stands in for it when the reader prefers reduced motion. */
+  introVideo?: {
+    src: string;
+    poster: string;
+    alt: string;
+  };
   sections: BlogSection[];
   outro: ReactNode[];
   /* "strip" (the default) crops every tile to one short row; "square" crops
@@ -83,10 +93,15 @@ export type BlogPost = {
   /* Columns for the "square" board on a wider screen (5 by default); pick
      one that divides the photo count so the grid closes evenly. */
   moodBoardColumns?: number;
+  /* On a phone, show the board as a swipeable carousel instead of a grid.
+     Desktop keeps the grid either way. */
+  moodBoardCarousel?: boolean;
   moodBoard: {
     image: string;
     alt: string;
     caption: string;
+    /* Optional styled version shown in place of `caption`, e.g. a link. */
+    captionContent?: ReactNode;
   }[];
 };
 
@@ -162,6 +177,11 @@ const MOOL_GHAR: BlogPost = {
       mool ghar the house begins before you are in it.
     </>,
   ],
+  introVideo: {
+    src: patanAerialVideo,
+    poster: patanAerialPoster,
+    alt: "Aerial footage drifting over the temple roofs of Patan Durbar Square",
+  },
   sections: [
     {
       heading: (
@@ -197,7 +217,7 @@ const MOOL_GHAR: BlogPost = {
       ],
     },
     {
-      heading: "Call it courtyard, chowk, bahal and everyone's business",
+      heading: "Call it courtyard, chowk, bahal",
       image: {
         src: gharChowk,
         alt: "A quiet square in Patan with a two-tiered pagoda temple among red brick houses",
@@ -223,7 +243,7 @@ const MOOL_GHAR: BlogPost = {
       ],
     },
     {
-      heading: "It's called the forbidden room: Agam Chhen",
+      heading: "The forbidden room: Agam Chhen",
       image: {
         src: gharMoolGhar,
         alt: "A diyo burning on the floor among marigold petals and sindoor",
@@ -321,21 +341,23 @@ const MOOL_GHAR: BlogPost = {
             "https://steemit.com/wedding/@elishagautam/marriage-with-the-sun-an-important-tradition",
             "Bahra Tayegu",
           )}
-          , and the groom is the sun god. Not Jesus,
-          dummy.
+          , and the groom is the sun god.
         </>,
         <>
-          The girl is kept in a room away from direct sunlight and away from men
-          for twelve days. On the twelfth day the ritual concludes: she is
-          brought out, and the first thing she is presented to, and the thing
-          she is married to, is the sun.
+          For twelve days, no sunlight reaches her and no male sets eyes on her —
+          not her brother, not her dad. Only female company; playing with
+          makeup, passing the hours with{" "}
+          {out("https://www.youtube.com/watch?v=LLH4vi8uupg", "gatti")}, filling
+          the room with their own energy. On the twelfth day the ritual
+          concludes: she is brought out, and the first thing she is presented
+          to, and the thing she is married to, is the sun.
         </>,
         <>
-          Which brings us to why any of this exists. The going explanation is
-          that these marriages were built as insurance against sati and against
-          widowhood — if a woman's first husband is a form of God, and
-          her second is the sun itself, then no human husband dying can ever
-          make her a widow. Her real husbands are immortal. The human one is
+          Which brings us to the why behind it all. The most compelling
+          explanation? These marriages were a kind of safety net, a cosmic
+          cushion against widowhood. If your first husband is a form of God and
+          your second is the sun itself, then no mortal man dying can ever
+          leave you a widow. Her real husbands are immortal. The human one is
           technically the runner-up.
         </>,
       ],
@@ -357,8 +379,9 @@ const MOOL_GHAR: BlogPost = {
           it alone.
         </>,
         <>
-          Some of it looks after the body: Bahra arrives as a girl is growing
-          up and gives her twelve days of rest, food and being fussed over. Some
+          Some of it looks after the body: Bahra shows up right as a girl is
+          growing up, and hands her twelve days of rest, feasting, and being
+          waited on hand and foot. Some
           of it looks after the mind: Ihi and bartabandha tell a child, in front
           of fifty relatives, that they belong — to a house, a lineage, a
           courtyard that will always have a plate for them. And some of it
@@ -389,6 +412,7 @@ const MOOL_GHAR: BlogPost = {
   /* Family photos from the Ihi and Bahra, 1998. */
   moodBoardLayout: "square",
   moodBoardTitle: "Moodboard for MoolGhar",
+  moodBoardCarousel: true,
   moodBoard: [
     {
       image: moolGharMood01,
@@ -398,12 +422,12 @@ const MOOL_GHAR: BlogPost = {
     {
       image: moolGharMood02,
       alt: "Girls seated in a row on a mat in a courtyard, offering pots and a fire pit in front of them",
-      caption: "lined up, ready for Bel",
+      caption: "front row for the Bel drop",
     },
     {
       image: moolGharMood03,
       alt: "Women passing white thread around a group of small girls beside a clay pot",
-      caption: "the thread goes round and round: ONZ",
+      caption: "round & round she goes: ONZ edition",
     },
     {
       image: moolGharMood04,
@@ -413,57 +437,61 @@ const MOOL_GHAR: BlogPost = {
     {
       image: moolGharMood05,
       alt: "A woman draping thread over a line of girls while family watch from a brick doorway",
-      caption: "the thread goes round and round: ANZ",
+      caption: "round & round again: ANZ edition",
     },
     {
       image: moolGharMood06,
       alt: "A woman crouched before small girls in red and gold while women stand watching",
-      caption: "somebody checking the bride is still listening",
+      caption: "Alah time",
+      captionContent: out(
+        "https://nenepal.com/blogs/cultural-guides/the-disappearing-practice-of-alah",
+        "Alah time",
+      ),
     },
     {
       image: moolGharMood07,
       alt: "A man in white holding a cloth while girls sit on a mat behind him",
-      caption: "procedure, and a lot of it",
+      caption: "rites, rituals & procedure it is",
     },
     {
       image: moolGharMood08,
       alt: "A crowded courtyard of girls in red and gold holding plates among family",
-      caption: "fifty people and four hours, roughly",
+      caption: "fifty people and five hours, roughly",
     },
     {
       image: moolGharMood09,
       alt: "An elder in white with a small girl on his lap, family and children around a puja plate",
-      caption: "the family photo after the family wedding",
+      caption: "best seat in the house: a lap",
     },
     {
       image: moolGharMood10,
       alt: "Girls in red sitting in a row beside fruit, pots and a square fire pit",
-      caption: "fruit on the ground, fruit for a husband",
+      caption: "bel fruit: the original long-term boyfriend",
     },
     {
       image: moolGharMood11,
       alt: "Four girls in gold and red silk holding leaf plates in a lane",
-      caption: "four brides, no grooms in sight",
+      caption: "four brides, zero grooms, all attitude",
     },
     {
       image: moolGharMood12,
       alt: "Two girls with yellow headbands seated while women tend to them indoors",
-      caption: "the twelve-day room",
+      caption: "second marriage, forever together sisters",
     },
     {
       image: moolGharMood13,
       alt: "A woman washing the hands of two girls in yellow headbands over a bowl",
-      caption: "hands washed, nearly back in the sun",
+      caption: "mum and her two beautiful brides",
     },
     {
       image: moolGharMood14,
       alt: "Three children in silk and paper caps sitting on a step with bowls",
-      caption: "three on a step, done for the day",
+      caption: "married by noon, snacking by one",
     },
     {
       image: moolGharMood15,
       alt: "A woman crouching before a line of girls in a sunny courtyard with a clay pot",
-      caption: "the courtyard doing its job",
+      caption: "courtyard having its main-character day",
     },
   ],
 };

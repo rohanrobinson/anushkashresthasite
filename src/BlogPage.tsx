@@ -9,6 +9,9 @@ import type { BlogPost } from "./blogPosts"
 export default function BlogPage({ post }: { post: BlogPost }) {
   const [lit, setLit] = useState<number | null>(null)
   const square = post.moodBoardLayout === "square"
+  const carousel = post.moodBoardCarousel === true
+  // Which photo the phone carousel is centred on, for the "3 / 15" count.
+  const [slide, setSlide] = useState(0)
 
   const body: React.CSSProperties = {
     fontFamily: "var(--font-body)",
@@ -27,10 +30,25 @@ export default function BlogPage({ post }: { post: BlogPost }) {
     fontWeight: 600,
   }
 
-  return (
-    <article
-      style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 2rem 6rem" }}
-    >
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches
+
+  const intro = (
+    <div className="post-row">
+      <div />
+      <div className="post-prose">
+        {post.intro.map((para, i) => (
+          <p key={i} style={{ ...body, fontSize: "1.1875rem" }}>
+            {para}
+          </p>
+        ))}
+      </div>
+    </div>
+  )
+
+  const head = (
+    <>
       {/* The piece's name out in the left rail and the record for it beside
           it, tops level, so the row reads as one header instead of leaving a
           hole above the record. */}
@@ -135,17 +153,48 @@ export default function BlogPage({ post }: { post: BlogPost }) {
           </span>
         </a>
       </div>
+    </>
+  )
 
-      <div className="post-row" style={{ marginTop: "2rem" }}>
-        <div />
-        <div className="post-prose">
-          {post.intro.map((para, i) => (
-            <p key={i} style={{ ...body, fontSize: "1.1875rem" }}>
-              {para}
-            </p>
+  return (
+    <article
+      style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 2rem 6rem" }}
+    >
+      {post.introVideo ? (
+        /* The header and the intro share one band with the footage running
+           behind both, so it reads as a single moving opening. A reader who
+           asks for less motion gets the poster. */
+        <section className="post-band post-band--top">
+          {/* Two plays of the same clip: a blurred one filling the band, and
+              on a wide screen a sharp one framed on the subject in the open
+              left of the band. */}
+          {["fill", "frame"].map((layer) => (
+            <video
+              key={layer}
+              className={`post-band-video post-band-video--${layer}`}
+              autoPlay={!reducedMotion}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={post.introVideo!.poster}
+              aria-hidden="true"
+            >
+              <source src={post.introVideo!.src} type="video/mp4" />
+            </video>
           ))}
-        </div>
-      </div>
+          <span className="sr-only">Video: {post.introVideo.alt}</span>
+          <div className="post-band-inner">
+            {head}
+            <div style={{ marginTop: "2rem" }}>{intro}</div>
+          </div>
+        </section>
+      ) : (
+        <>
+          {head}
+          <div style={{ marginTop: "2rem" }}>{intro}</div>
+        </>
+      )}
 
       {post.sections.map((section, i) => {
         const row = (
@@ -240,7 +289,30 @@ export default function BlogPage({ post }: { post: BlogPost }) {
           {post.moodBoardTitle ?? "Mood board for this one"}
         </h3>
         <div
-          className={square ? "post-mosaic post-mosaic--square" : "post-mosaic"}
+          className={[
+            "post-mosaic",
+            square && "post-mosaic--square",
+            carousel && "post-mosaic--carousel",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          onScroll={
+            carousel
+              ? (e) => {
+                  // Tiles snap to the centre and the padding lets the first
+                  // and last centre too, so scroll position maps evenly to
+                  // the photo index.
+                  const el = e.currentTarget
+                  const max = el.scrollWidth - el.clientWidth
+                  if (max <= 0) return
+                  setSlide(
+                    Math.round(
+                      (el.scrollLeft / max) * (post.moodBoard.length - 1),
+                    ),
+                  )
+                }
+              : undefined
+          }
           style={
             post.moodBoardColumns
               ? ({ "--cols": post.moodBoardColumns } as React.CSSProperties)
@@ -295,14 +367,23 @@ export default function BlogPage({ post }: { post: BlogPost }) {
                     "linear-gradient(180deg, rgba(28,8,6,0) 0%, rgba(28,8,6,0.78) 60%, rgba(28,8,6,0.92) 100%)",
                   opacity: lit === i ? 1 : 0,
                   transform: lit === i ? "translateY(0)" : "translateY(0.5rem)",
-                  pointerEvents: "none",
+                  pointerEvents: lit === i ? "auto" : "none",
                 }}
               >
-                {item.caption}
+                {item.captionContent ?? item.caption}
               </div>
             </div>
           ))}
         </div>
+        {carousel && (
+          <p
+            className="post-carousel-count"
+            aria-hidden="true"
+            style={railLabel}
+          >
+            swipe · {slide + 1} / {post.moodBoard.length}
+          </p>
+        )}
       </section>
 
     </article>

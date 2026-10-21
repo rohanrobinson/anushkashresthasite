@@ -122,8 +122,11 @@ const TWO_CENTS_POSTS = [
 
 /* A post with `availableOn` stays "coming soon" until that day, in the
    reader's own time zone, then opens on its own. It takes a full date
-   (YYYY-MM-DD) or just a year (YYYY), which opens on January 1. */
+   (YYYY-MM-DD) or just a year (YYYY), which opens on January 1. A full
+   timestamp with an offset (2026-10-21T07:09:00-05:00) opens at that exact
+   moment everywhere instead. */
 function availableDate(when: string) {
+  if (when.includes("T")) return new Date(when)
   return new Date(`${when.length === 4 ? `${when}-01-01` : when}T00:00`)
 }
 
@@ -148,7 +151,8 @@ const GHAR_POSTS = [
     tag: "Origin Story",
     slug: "mool-ghar",
     title: "The meaning behind Mool Ghar",
-    availableOn: "2026-10-21",
+    // 7:09 AM Central (CDT, UTC-5).
+    availableOn: "2026-10-21T07:09:00-05:00",
     body: "In my culture, mool ghar literally means \u201cancestral house,\u201d but the words hold much more than a building. It is the sacred, social and ritual centre of family life~ a place where ancestry, tradition and everyday life meet. If Newari culture is worth your time, come read along.",
     date: "Jul 30, 2026",
   },
@@ -1181,12 +1185,19 @@ function MoodBoard() {
             <span className="mood-sub">mood board</span>
           </h2>
           <div className="mood-head-aside">
-            <p className="mood-blurb">
-              turns out Kanye was right about summer Chi ~
-              <br />
-              here&rsquo;s mine in a scroll: lake days, late nights,
-              <br />
-              &amp; outfits that got their mileage!
+            {/* Set line by line so a phone never re-wraps it: the three
+                lines and the ~ between the first two stay as written. */}
+            <p className="mood-blurb phone-fit">
+              <span className="mood-blurb-line">
+                turns out Kanye was right about summer Chi{" "}
+                <span className="mood-blurb-tilde">~</span>
+              </span>
+              <span className="mood-blurb-line">
+                here&rsquo;s mine in a scroll: lake days, late nights,
+              </span>
+              <span className="mood-blurb-line">
+                &amp; outfits that got their mileage!
+              </span>
             </p>
             {/* Placeholder — swap the span for <a href="..."> once older
                 boards have a page. */}
@@ -1526,6 +1537,7 @@ function Footer({ onHome }: { onHome: () => void }) {
       }}
     >
       <div
+        className="site-footer-row phone-fit"
         style={{
           maxWidth: 1200,
           margin: "0 auto",
@@ -1543,7 +1555,7 @@ function Footer({ onHome }: { onHome: () => void }) {
             padding: 0,
             cursor: "pointer",
             fontFamily: "var(--font-display)",
-            fontSize: "1rem",
+            fontSize: "1em",
             color: "var(--color-cream)",
             fontWeight: 400,
             transition: "opacity 0.2s ease",
@@ -1560,7 +1572,7 @@ function Footer({ onHome }: { onHome: () => void }) {
         <span
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "0.8125rem",
+            fontSize: "0.8125em",
             color: "var(--color-cream-dim)",
           }}
         >
@@ -1600,7 +1612,10 @@ function EmailPopup() {
           _captcha: "false",
         }),
       })
-      setStatus(res.ok ? "done" : "error")
+      /* FormSubmit answers 200 even when it drops a submission (an
+         unactivated site, say), so the verdict is the body's `success`. */
+      const data = await res.json().catch(() => null)
+      setStatus(res.ok && String(data?.success) === "true" ? "done" : "error")
     } catch {
       setStatus("error")
     }
@@ -1858,7 +1873,13 @@ export default function App() {
     return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
 
-  const post = getPost(postSlugFrom(hash))
+  /* A post whose Ghar card isn't open yet can't be reached by its URL
+     either, so a shared link doesn't get in early. */
+  const found = getPost(postSlugFrom(hash))
+  const post =
+    found && isOpen(GHAR_POSTS.find((card) => card.slug === found.slug) ?? {})
+      ? found
+      : undefined
 
   useEffect(() => {
     if (post) {
