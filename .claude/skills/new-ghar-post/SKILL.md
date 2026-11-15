@@ -46,6 +46,13 @@ numbered interrogation. What you need:
   three paragraphs; posts so far run 4–7 sections.
 - **Images** — which files for the section rails and which five for the mood
   board, each with alt text and a short caption.
+- **Intro video** — every post opens like Mool Ghar: looping footage behind
+  the header and intro (`introVideo: { src, poster, alt }`). Ask for a clip
+  that fits the post; `BlogPage.tsx` handles the rest. Phone footage is
+  usually HEVC `.mov`, which only Safari plays and which is far too heavy:
+  convert it to H.264 `.mp4` (720px on the long side or so, no audio,
+  faststart, roughly 10–30s that loops cleanly) and save its first frame as
+  the poster `.jpg`. Keep the source `.mov` out of git.
 
 Derive the rest:
 

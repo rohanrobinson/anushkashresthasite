@@ -19,7 +19,7 @@ import moodGoldWings from "./assets/mood/34-gold-wings.jpg"
 import moodSilkSkirtWalk from "./assets/mood/28-silk-skirt-walk.jpg"
 import moodWindowLeopard from "./assets/mood/29-window-leopard.jpg"
 import moodWineBarOlive from "./assets/mood/30-wine-bar-olive.jpg"
-import gharMoolGhar from "./assets/ghar/mool-ghar-diyo-thumb.jpg"
+import gharMoolGhar from "./assets/ghar/music-rose-puja.jpg"
 import gharDashain from "./assets/ghar/dashain-tika-dog-thumb.jpg"
 import gharTreePoseLake from "./assets/ghar/tree-pose-lake-thumb.jpg"
 import twoCents001 from "./assets/twocents/001-mirror-glitch.jpg"
@@ -147,14 +147,14 @@ function availableLabel(when: string) {
 const GHAR_POSTS = [
   {
     image: gharMoolGhar,
-    imageAlt: "A diyo burning on the floor among marigold petals and sindoor",
+    imageAlt: "A hand holding a pink rose over a puja thali of flowers, banana and sindoor",
     tag: "Origin Story",
     slug: "mool-ghar",
     title: "The meaning behind Mool Ghar",
     // 7:09 AM Central (CDT, UTC-5).
     availableOn: "2026-10-21T07:09:00-05:00",
     body: "In my culture, mool ghar literally means \u201cancestral house,\u201d but the words hold much more than a building. It is the sacred, social and ritual centre of family life~ a place where ancestry, tradition and everyday life meet. If Newari culture is worth your time, come read along.",
-    date: "Jul 30, 2026",
+    date: "Oct 21, 2026",
   },
   {
     image: gharDashain,
@@ -170,9 +170,10 @@ const GHAR_POSTS = [
         , by Bikram Sambat
       </>
     ),
+    // Nhu Daya Bhintuna, the first day of Nepal Sambat 1147.
     availableOn: "2026-11-10",
-    body: "Fun fact: I come from the future. Back home it is already 2083, and the new year lands in April, not January. Growing up, kheer meant Shrawan, Holi marked the end of winter, and Happu adorned with a marigold garland meant Tihar, heralding the beginning of winter. These are my twelve months, from Baisakh to Chaitra, remembered through the festivals, flavours, and little traditions that made them home.",
-    date: "Jul 10, 2026",
+    body: "Fun fact: I come from the future. Back home it is already 2083, and the new year lands in April, not January. Unless you are Newar, in which case it lands at Tihar, and it is 1147. Growing up, kheer meant Shrawan, Holi marked the end of winter, and Happu adorned with a marigold garland meant Tihar, heralding the beginning of winter. These are my twelve months, from Kartik round to Ashwin, remembered through the festivals, flavours, and little traditions that made them home.",
+    date: "Nov 10, 2026",
   },
   {
     image: gharTreePoseLake,
@@ -1874,10 +1875,13 @@ export default function App() {
   }, [])
 
   /* A post whose Ghar card isn't open yet can't be reached by its URL
-     either, so a shared link doesn't get in early. */
+     either, so a shared link doesn't get in early. The local dev server
+     skips this so unreleased posts can be previewed by their links. */
   const found = getPost(postSlugFrom(hash))
   const post =
-    found && isOpen(GHAR_POSTS.find((card) => card.slug === found.slug) ?? {})
+    found &&
+    (import.meta.env.DEV ||
+      isOpen(GHAR_POSTS.find((card) => card.slug === found.slug) ?? {}))
       ? found
       : undefined
 

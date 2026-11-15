@@ -55,6 +55,19 @@
   --color-paper-dim: #7d5a4c;
 }
 
+/* The theme colours again as bare channels, so a wash or a shadow can take
+   its own alpha (rgba(var(--scrim), 0.86)) and a theme can swap the colour
+   without touching every rule. These hold the dark site's values. */
+:root {
+  --scrim: 51, 32, 26;
+  --shade: 28, 8, 6;
+  --tint: 248, 236, 224;
+  --cream-dim-rgb: 255, 218, 194;
+  --saffron-rgb: 255, 217, 189;
+  /* Quieter than body copy, for asides like a post's "For the record". */
+  --color-quiet: rgba(248, 236, 224, 0.74);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -307,7 +320,7 @@ body {
   display: block;
   width: 100%;
   padding: 0.85rem 1rem;
-  background: rgba(248, 236, 224, 0.05);
+  background: rgba(var(--tint), 0.05);
   text-decoration: none;
   transition:
     background-color 0.25s ease,
@@ -356,7 +369,7 @@ body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-earth);
-  box-shadow: 0 6px 16px -8px rgba(28, 8, 6, 0.8);
+  box-shadow: 0 6px 16px -8px rgba(var(--shade), 0.8);
   transition:
     background-color 0.25s ease,
     transform 0.25s ease,
@@ -370,7 +383,7 @@ body {
 }
 .twocents-note:hover,
 .twocents-note:focus-visible {
-  background: rgba(248, 236, 224, 0.1);
+  background: rgba(var(--tint), 0.1);
 }
 .twocents-note:hover .twocents-note-go,
 .twocents-note:focus-visible .twocents-note-go {
@@ -603,13 +616,13 @@ body {
   margin: 0 1.1rem;
   padding: 0;
   border: 1px solid var(--color-border);
-  background: rgba(248, 236, 224, 0.08);
+  background: rgba(var(--tint), 0.08);
   overflow: hidden;
   cursor: pointer;
   scroll-snap-align: center;
   transform: rotateY(calc(var(--d) * -28deg))
     scale(calc(1 - var(--ad) * 0.12));
-  box-shadow: 0 24px 50px -24px rgba(28, 8, 6, 0.9);
+  box-shadow: 0 24px 50px -24px rgba(var(--shade), 0.9);
   transition:
     box-shadow 0.4s ease,
     border-color 0.4s ease;
@@ -680,7 +693,7 @@ body {
 }
 .reel-credit {
   padding: 0.28rem 0.55rem;
-  border: 1px solid rgba(248, 236, 224, 0.16);
+  border: 1px solid rgba(var(--tint), 0.16);
   border-radius: 2px;
   font-family: var(--font-body);
   font-size: 0.6875rem;
@@ -722,7 +735,7 @@ body {
 .reel-step:focus-visible {
   border-color: var(--color-marigold);
   color: var(--color-marigold);
-  background-color: rgba(248, 236, 224, 0.06);
+  background-color: rgba(var(--tint), 0.06);
 }
 .reel-step:disabled {
   opacity: 0.3;
@@ -765,14 +778,14 @@ body {
     aspect-ratio: 3 / 4;
     margin: 0 1.5rem;
     padding: 2rem 1.75rem;
-    border: 1px dashed rgba(248, 236, 224, 0.35);
+    border: 1px dashed rgba(var(--tint), 0.35);
     background:
       radial-gradient(
         120% 80% at 50% 0%,
         rgba(247, 191, 99, 0.12),
         transparent 60%
       ),
-      rgba(28, 8, 6, 0.25);
+      rgba(var(--shade), 0.25);
   }
   .reel-end--start {
     text-align: right;
@@ -1218,6 +1231,61 @@ body {
 .post-music {
   --photo-rest: sepia(0.22) saturate(0.78) brightness(0.58) contrast(1.04);
 }
+/* A calendar's board (Bikram Sambat): each tile names its month in the
+   middle of the photo. At rest the name is romanised and the photo is in
+   black and white; hover or tap a tile and the name turns to Devanagari as
+   the photo comes back in colour. Both names share one spot and cross-fade,
+   over a soft shadow so they hold on bright and dark frames alike. */
+.post-mosaic-month {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  color: var(--color-cream);
+  text-shadow:
+    0 1px 3px rgba(var(--shade), 0.75),
+    0 2px 12px rgba(var(--shade), 0.85);
+}
+.post-mosaic-month > span {
+  grid-area: 1 / 1;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.post-mosaic-month-en {
+  font-family: var(--font-body);
+  font-size: clamp(0.625rem, 0.75vw, 0.75rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.post-mosaic-month-ne {
+  font-family: var(--font-devanagari);
+  font-size: clamp(0.75rem, 1.05vw, 0.9375rem);
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(3px);
+}
+.mood-tile.is-lit .post-mosaic-month-en {
+  opacity: 0;
+  transform: translateY(-3px);
+}
+.mood-tile.is-lit .post-mosaic-month-ne {
+  opacity: 1;
+  transform: none;
+}
+/* Each tile opens its month; keyboard focus shows on the tile itself. */
+.post-mosaic--calendar .mood-tile:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 2px;
+}
+.post-mosaic--calendar {
+  --photo-rest: grayscale(1) brightness(0.72) contrast(1.06);
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-mosaic-month > span {
+    transition: none;
+  }
+}
 .post-mosaic .mood-tile img {
   filter: var(--photo-rest);
 }
@@ -1260,6 +1328,144 @@ body {
 
 /* A post's own mood board: a short strip under the reading column, not the
    full mosaic. Two up on a phone, five across once there is room. */
+/* A section's button out to a fuller page. It rests light and quiet, a
+   soft saffron wash with a thin border, and firms up on hover or press into
+   the same inked, offset look as "Count me in" in the signup, at a smaller
+   size, pressing into its shadow while held. */
+.post-cta {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.9rem;
+  /* One width for every month's button, whatever its name: the widest
+     label, "Step into Mangshir →", is 15.9em, plus slack for Safari. */
+  min-width: 16.5em;
+  text-align: center;
+  background-color: rgba(var(--saffron-rgb), 0.14);
+  color: var(--color-saffron);
+  border: 1.5px solid rgba(var(--saffron-rgb), 0.45);
+  box-shadow: 0 0 0 transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+.post-cta:hover,
+.post-cta:focus-visible {
+  background-color: var(--color-saffron);
+  color: var(--color-paper-ink);
+  border-color: var(--color-paper-ink);
+  box-shadow: 3px 3px 0 var(--color-paper-ink);
+  outline: none;
+}
+.post-cta:active {
+  background-color: var(--color-saffron);
+  color: var(--color-paper-ink);
+  border-color: var(--color-paper-ink);
+  transform: translate(1.5px, 1.5px);
+  box-shadow: 1.5px 1.5px 0 var(--color-paper-ink);
+}
+/* Under the last paragraph, flush with its right edge, so it reads as the
+   answer to the line it follows. */
+.post-cta-slot {
+  text-align: right;
+  margin-top: 0.25rem;
+}
+/* Room under the button for the bubble on a phone, where the band's foot is
+   too close and would clip it. */
+@media (max-width: 900px) {
+  .post-cta-slot {
+    margin-bottom: 2.75rem;
+  }
+}
+/* The "coming soon" bubble drops out under the button's right edge with a
+   small tail pointing up at it (above, it would cover the paragraph), and is
+   only there while it has words in it. */
+.post-cta-anchor {
+  position: relative;
+  display: inline-block;
+}
+.post-cta-pop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.65rem);
+  z-index: 3;
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-paper-ink);
+  background-color: var(--color-marigold);
+  border: 1.5px solid var(--color-paper-ink);
+  box-shadow: 2px 2px 0 var(--color-paper-ink);
+  padding: 0.35rem 0.55rem;
+  pointer-events: none;
+}
+.post-cta-pop:empty {
+  display: none;
+}
+.post-cta-pop:not(:empty) {
+  animation: post-cta-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.post-cta-pop::after {
+  content: "";
+  position: absolute;
+  right: 0.9rem;
+  bottom: 100%;
+  border: 0.35rem solid transparent;
+  border-bottom-color: var(--color-paper-ink);
+}
+@keyframes post-cta-pop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-cta,
+  .post-cta-pop:not(:empty) {
+    transition: none;
+    animation: none;
+  }
+  .post-cta:active {
+    transform: none;
+  }
+}
+
+/* The mood board's label and the publish date: label left, date right, on
+   one row under the hairline. On a phone the row holds on one line (see
+   .phone-fit) and scales rather than dropping the date underneath. */
+.post-mood-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1em;
+  margin: 0.75rem 0 0.9rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 1rem;
+}
+/* --fit-em is the label, the date and the 1em gap, measured per post since
+   the labels differ: Mool Ghar's row is 19.58em, Bikram Sambat's 21.78em.
+   A new post with a longer label needs its own. */
+@media (max-width: 640px) {
+  .post-mood-head {
+    --fit-size: 1rem;
+    --fit-em: 20.2;
+  }
+  .post-mood-head[data-post="festival-calendar"] {
+    --fit-em: 22.4;
+  }
+}
+
 .post-mosaic {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -1293,6 +1499,69 @@ body {
 @media (max-width: 900px) {
   .post-mosaic--square {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+/* Gallery wall (Bikram Sambat): twelve photos hung like framed prints,
+   tall frames for the portraits and wide ones for the landscapes, packed
+   edge to edge into one rectangle. Each tile takes its area by its place
+   in the list, so the board is drawn for exactly these twelve, in month
+   order (k = Kartik ... h = Ashwin):
+     k Kartik   m Mangshir  p Poush   g Magh    f Falgun  c Chaitra
+     b Baisakh  j Jestha    a Asar    s Shrawan w Bhadra  h Ashwin
+   It reads in month order: the top row left to right, then Baisakh in the
+   middle, then the bottom row left to right (Asar sits above Shrawan in
+   the middle column). Asar's photo is a portrait and Shrawan's a
+   landscape, which is why Asar takes the tall frame.
+   Swap a photo for one of a different shape and its area may want
+   changing too. */
+.post-mosaic--gallery {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  grid-auto-rows: unset;
+  grid-template-areas:
+    "k k m p g f c"
+    "k k m p g f c"
+    "k k m b b f c"
+    "j j a b b w h"
+    "j j a s s w h"
+    "j j a s s w h";
+  aspect-ratio: 2 / 1;
+  gap: 0.75rem;
+}
+.post-mosaic--gallery .mood-tile:nth-child(1) { grid-area: k; }
+.post-mosaic--gallery .mood-tile:nth-child(2) { grid-area: m; }
+.post-mosaic--gallery .mood-tile:nth-child(3) { grid-area: p; }
+.post-mosaic--gallery .mood-tile:nth-child(4) { grid-area: g; }
+.post-mosaic--gallery .mood-tile:nth-child(5) { grid-area: f; }
+.post-mosaic--gallery .mood-tile:nth-child(6) { grid-area: c; }
+.post-mosaic--gallery .mood-tile:nth-child(7) { grid-area: b; }
+.post-mosaic--gallery .mood-tile:nth-child(8) { grid-area: j; }
+.post-mosaic--gallery .mood-tile:nth-child(9) { grid-area: a; }
+.post-mosaic--gallery .mood-tile:nth-child(10) { grid-area: s; }
+.post-mosaic--gallery .mood-tile:nth-child(11) { grid-area: w; }
+.post-mosaic--gallery .mood-tile:nth-child(12) { grid-area: h; }
+/* A phone is too narrow for seven across: three columns, the same frames
+   restacked into a tall rectangle. */
+@media (max-width: 720px) {
+  .post-mosaic--gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(12, minmax(0, 1fr));
+    grid-template-areas:
+      "k k m"
+      "k k m"
+      "p g f"
+      "p g f"
+      "c b b"
+      "c b b"
+      "j j j"
+      "j j j"
+      "a s s"
+      "a s s"
+      "w h h"
+      "w h h";
+    aspect-ratio: 1 / 2.75;
     gap: 0.5rem;
   }
 }
@@ -1379,17 +1648,17 @@ body {
   background:
     linear-gradient(
       to bottom,
-      rgba(51, 32, 26, 0.45) 0%,
-      rgba(51, 32, 26, 0) 18%,
-      rgba(51, 32, 26, 0) 82%,
-      rgba(51, 32, 26, 0.45) 100%
+      rgba(var(--scrim), 0.45) 0%,
+      rgba(var(--scrim), 0) 18%,
+      rgba(var(--scrim), 0) 82%,
+      rgba(var(--scrim), 0.45) 100%
     ),
     linear-gradient(
       to right,
-      rgba(51, 32, 26, 0.5) 0%,
-      rgba(51, 32, 26, 0.62) 20%,
-      rgba(51, 32, 26, 0.9) 33%,
-      rgba(51, 32, 26, 0.92) 100%
+      rgba(var(--scrim), 0.5) 0%,
+      rgba(var(--scrim), 0.62) 20%,
+      rgba(var(--scrim), 0.9) 33%,
+      rgba(var(--scrim), 0.92) 100%
     );
 }
 /* Footage instead of a still: it sits where ::before would, under the same
@@ -1456,7 +1725,7 @@ body {
     right: auto;
     width: auto;
     aspect-ratio: 0.82;
-    object-position: 100% 91%;
+    object-position: var(--frame-position, 100% 91%);
     mask-image: linear-gradient(to right, #000 78%, transparent);
   }
   /* Light over the framed clip, dark from where the prose starts. */
@@ -1464,18 +1733,203 @@ body {
     background:
       linear-gradient(
         to bottom,
-        rgba(51, 32, 26, 0.45) 0%,
-        rgba(51, 32, 26, 0) 18%,
-        rgba(51, 32, 26, 0) 82%,
-        rgba(51, 32, 26, 0.45) 100%
+        rgba(var(--scrim), 0.45) 0%,
+        rgba(var(--scrim), 0) 18%,
+        rgba(var(--scrim), 0) 82%,
+        rgba(var(--scrim), 0.45) 100%
       ),
       linear-gradient(
         to right,
-        rgba(51, 32, 26, 0.2) 0,
-        rgba(51, 32, 26, 0.3) 360px,
-        rgba(51, 32, 26, 0.88) 500px,
-        rgba(51, 32, 26, 0.92) 100%
+        rgba(var(--scrim), 0.2) 0,
+        rgba(var(--scrim), 0.3) 360px,
+        rgba(var(--scrim), 0.88) 500px,
+        rgba(var(--scrim), 0.92) 100%
       );
+  }
+}
+/* See-through: the blurred copy reads as the place behind the intro, not
+   just as colour. Less blur, and the crop moved up from the plaza floor onto
+   the roofs and the crowd. The wash stays the shared one above, so every
+   post keeps the same shade: the framed clip on the left bright, the copy
+   behind the text dim. Wide screens only; a phone shows the clip whole. */
+@media (min-width: 901px) {
+  .post-band--see-through .post-band-video--fill {
+    object-position: 50% 60%;
+    filter: var(--photo-rest) blur(3px);
+  }
+  .post-band--see-through:hover .post-band-video--fill {
+    filter: blur(3px);
+  }
+}
+
+/* Footage on the right: the opening band mirrored. The sharp copy fills a
+   column down the band's right edge, --frame-w wide, fading into the blur
+   along its left side, and the title and intro stay on the left over the
+   blurred copy, starting on the page's usual left edge and stopping a gap
+   short of the footage so no paragraph runs over the moving picture. A
+   laptop needs about 1180px for the column and a readable measure beside
+   it; between that and a phone the band runs the text full width over the
+   blurred copy alone. */
+@media (min-width: 1180px) {
+  .post-band--top.post-band--frame-right {
+    --frame-w: clamp(360px, 34vw, 580px);
+  }
+  .post-band--top.post-band--frame-right .post-band-video--frame {
+    left: auto;
+    right: 0;
+    width: var(--frame-w);
+    aspect-ratio: auto;
+    mask-image: linear-gradient(to left, #000 88%, transparent);
+  }
+  /* Out of the centred 1200px column on the right only: the left edge
+     stays where every other row starts, the right edge stops 3rem short of
+     the footage. */
+  .post-band--top.post-band--frame-right .post-band-inner {
+    max-width: none;
+    margin: 0 0 0 max(0px, calc(50% - 600px));
+    padding-right: calc(var(--frame-w) + 3rem);
+  }
+  .post-band--top.post-band--frame-right .post-row,
+  .post-band--top.post-band--frame-right .post-head {
+    grid-template-columns: 13rem minmax(0, 40rem);
+    gap: 3rem;
+  }
+  /* The column is narrower than a band's usual measure: justified, it
+     opens wide gaps between words, so it runs flush left here, and the
+     listen card's line wraps, evenly, instead of being cut short. */
+  .post-band--top.post-band--frame-right .post-prose p {
+    text-align: left;
+  }
+  .post-band--top.post-band--frame-right .post-music-line {
+    white-space: normal;
+    text-wrap: balance;
+  }
+  /* Dark under the text, lifting to light over the footage. */
+  .post-band--top.post-band--frame-right::after {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(var(--scrim), 0.45) 0%,
+        rgba(var(--scrim), 0) 18%,
+        rgba(var(--scrim), 0) 82%,
+        rgba(var(--scrim), 0.45) 100%
+      ),
+      linear-gradient(
+        to left,
+        rgba(var(--scrim), 0.2) 0,
+        rgba(var(--scrim), 0.3) calc(var(--frame-w) * 0.85),
+        rgba(var(--scrim), 0.88) calc(var(--frame-w) + 3rem),
+        rgba(var(--scrim), 0.92) 100%
+      );
+  }
+}
+@media (min-width: 901px) and (max-width: 1179px) {
+  .post-band--top.post-band--frame-right .post-band-video--frame {
+    display: none;
+  }
+}
+
+/* Footage in the middle: the opening band in two parts. On top, one row in
+   three equal columns: the title on the left and the record on the right,
+   both over the blurred copy, with the sharp copy framed between them, tall
+   enough for the portrait clip to read. Below, the intro across the full
+   width of the row. The sharp copy is only
+   there on a wide screen; a phone keeps the band as it always was. */
+.post-head-clip {
+  display: none;
+}
+@media (min-width: 901px) {
+  .post-band--top.post-band--frame-center .post-head {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3rem;
+    align-items: center;
+  }
+  /* No frame: every edge feathers out, so the sharp footage melts into the
+     blurred copy around it rather than sitting on it as a picture. Widen
+     the fade stops to blend it further. It reaches out into the gaps either
+     side so the feathered edges don't shrink the solid middle. */
+  .post-head-clip {
+    --clip-fade-x: 22%;
+    --clip-fade-y: 16%;
+    display: block;
+    height: 31rem;
+    margin-inline: -2rem;
+    overflow: hidden;
+    -webkit-mask-image:
+      linear-gradient(
+        to right,
+        transparent,
+        #000 var(--clip-fade-x),
+        #000 calc(100% - var(--clip-fade-x)),
+        transparent
+      ),
+      linear-gradient(
+        to bottom,
+        transparent,
+        #000 var(--clip-fade-y),
+        #000 calc(100% - var(--clip-fade-y)),
+        transparent
+      );
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(
+        to right,
+        transparent,
+        #000 var(--clip-fade-x),
+        #000 calc(100% - var(--clip-fade-x)),
+        transparent
+      ),
+      linear-gradient(
+        to bottom,
+        transparent,
+        #000 var(--clip-fade-y),
+        #000 calc(100% - var(--clip-fade-y)),
+        transparent
+      );
+    mask-composite: intersect;
+  }
+  .post-head-clip-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--frame-position, center);
+    filter: var(--photo-rest);
+    transition: filter 0.6s ease;
+  }
+  .post-band:hover .post-head-clip-video {
+    filter: none;
+  }
+  /* The record's column is a third of the row, so its line wraps, evenly,
+     instead of being cut short. */
+  .post-band--top.post-band--frame-center .post-music-line {
+    white-space: normal;
+    text-wrap: balance;
+  }
+  /* The full width of the row above, edge to edge with the title and the
+     record. The empty cell that holds the left rail in other bands goes. */
+  .post-band--top.post-band--frame-center .post-intro {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 1.5rem;
+  }
+  .post-band--top.post-band--frame-center .post-intro > :first-child {
+    display: none;
+  }
+  /* A lighter wash over the head row so the blur shows beside the clip,
+     deepening under the intro so the paragraphs keep their contrast. */
+  .post-band--top.post-band--frame-center::after {
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--scrim), 0.5) 0,
+      rgba(var(--scrim), 0.5) 30rem,
+      rgba(var(--scrim), 0.88) 38rem,
+      rgba(var(--scrim), 0.92) 100%
+    );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-head-clip-video {
+    transition: none;
   }
 }
 .post-band-inner {
@@ -1500,23 +1954,685 @@ body {
   font-size: 0.75rem;
   font-style: italic;
   line-height: 1.4;
-  color: rgba(255, 218, 194, 0.8);
-  text-shadow: 0 1px 6px rgba(28, 8, 6, 0.9);
+  color: rgba(var(--cream-dim-rgb), 0.8);
+  text-shadow: 0 1px 6px rgba(var(--shade), 0.9);
 }
 @media (max-width: 900px) {
   .post-band-inner {
     padding: 3.25rem 2rem 2.25rem;
   }
   .post-band::after {
-    background: rgba(51, 32, 26, 0.86);
+    background: rgba(var(--scrim), 0.86);
+  }
+}
+/* A section's heading, out in the left rail of its row, or in the left
+   panel of a three-panel band. */
+.post-section-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.375rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-cream);
+  margin: 0;
+}
+
+/* A three-panel band: 25 / 50 / 25 across the full width, a hairline
+   between each, every panel over its own photo under its own scrim. The
+   outer panels hold only a few words, so their scrim is light and the photo
+   shows; the middle one is near-solid under the prose. Hovering a panel
+   shows its photo as taken. The band's own photo layers are off. */
+.post-tri {
+  display: grid;
+  /* Each outer panel's share of the width; the middle takes the rest. */
+  --tri-side: 25%;
+  grid-template-columns: var(--tri-side) 1fr var(--tri-side);
+}
+.post-tri::before,
+.post-tri::after {
+  content: none;
+}
+.post-tri-panel {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  padding: 4.5rem clamp(1rem, 2.5vw, 2.5rem) 3.25rem;
+}
+.post-tri-panel + .post-tri-panel {
+  border-left: 1px solid var(--color-border);
+}
+.post-tri-panel::before,
+.post-tri-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.post-tri-panel::before {
+  background: var(--band-image) var(--band-position, center) / cover
+    no-repeat;
+  filter: var(--photo-rest);
+  transition: filter 0.6s ease;
+}
+.post-tri-panel:hover::before {
+  filter: none;
+}
+.post-tri-panel::after {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(var(--scrim), 0.45) 0%,
+      rgba(var(--scrim), 0) 18%,
+      rgba(var(--scrim), 0) 82%,
+      rgba(var(--scrim), 0.45) 100%
+    ),
+    rgba(var(--scrim), 0.4);
+}
+.post-tri-main::after {
+  background: rgba(var(--scrim), 0.88);
+}
+.post-tri-side .post-section-title {
+  text-shadow: 0 1px 8px rgba(var(--shade), 0.9);
+}
+/* The button sits at the foot of its panel, level with the end of the
+   prose beside it (the last paragraph's bottom margin added back), and
+   wraps rather than spilling out of a narrow panel. */
+.post-tri-side--end {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: calc(3.25rem + 1.25rem);
+}
+.post-tri .post-cta-anchor {
+  max-width: 100%;
+}
+.post-tri .post-cta {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+@media (max-width: 900px) {
+  .post-tri-panel {
+    padding-top: 3.25rem;
+    padding-bottom: 2.25rem;
+  }
+  .post-tri-side--end {
+    padding-bottom: calc(2.25rem + 1.25rem);
+  }
+}
+
+/* The prose window (ScrollWindow in BlogPage). Its font-size and
+   line-height match the paragraphs' so `1lh` is one of their lines, and
+   the window is at most --reel-lines of them tall (set per section in
+   blogPosts); shorter text just sits in it whole, with no fade.
+   The text runs out under a soft fade at the bottom edge, and once it has
+   moved, at the top edge too; the fades lift at the ends. The scrollbar is
+   hidden, but the window still scrolls by hand. */
+.post-reel {
+  --reel-fade: 0.6lh;
+  --reel-top: 1;
+  --reel-bottom: 0.2;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  max-height: calc(var(--reel-lines) * 1lh);
+  overflow-y: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, var(--reel-top)) 0,
+    #000 var(--reel-fade),
+    #000 calc(100% - var(--reel-fade)),
+    rgba(0, 0, 0, var(--reel-bottom)) 100%
+  );
+}
+.post-reel::-webkit-scrollbar {
+  display: none;
+}
+.post-reel.is-scrolled {
+  --reel-top: 0.2;
+}
+.post-reel.is-end {
+  --reel-bottom: 1;
+}
+.post-reel.is-whole {
+  mask-image: none;
+}
+.post-reel:focus-visible {
+  outline: 1px solid var(--color-border);
+  outline-offset: 0.5rem;
+}
+/* The round button under the window: a light disc with a dark double
+   chevron, which turns to a pause sign while the text moves and points up
+   once it reaches the end. */
+.post-reel-button {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 1.5rem auto 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-cream);
+  color: var(--color-paper-ink);
+  box-shadow: 0 6px 18px rgba(var(--shade), 0.35);
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+.post-reel-button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s ease;
+}
+.post-reel-button.is-end svg {
+  transform: rotate(180deg);
+}
+.post-reel-button:hover {
+  background-color: var(--color-saffron);
+  transform: translateY(-1px);
+}
+.post-reel-button:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 3px;
+}
+/* With the window, the middle panel ends on the round button rather than
+   a paragraph, so the Kartik button drops level with it. */
+.post-tri:has(.post-reel-button) .post-tri-side--end {
+  padding-bottom: 3.25rem;
+}
+@media (max-width: 900px) {
+  .post-tri:has(.post-reel-button) .post-tri-side--end {
+    padding-bottom: 2.25rem;
+  }
+}
+/* On a phone the outer panels are thin strips, about 107px on the 430px
+   reference phone. Everything in them is sized in em off the panel, and the
+   panel's size is tied to the screen width, so the strips scale down whole
+   on a narrower phone and every line breaks where it does at 430px. */
+@media (max-width: 640px) {
+  .post-tri-panel {
+    padding-inline: 0.875rem;
+  }
+  .post-tri-side {
+    font-size: min(1rem, calc(100vw / 26.875));
+    padding-inline: 0.5em;
+  }
+  .post-tri-side .post-section-title {
+    font-size: 1.25em;
+  }
+  /* month() sets the romanised name in rem inline; in a strip it scales
+     with the strip like everything else. */
+  .post-tri-side .post-section-title > span:last-child {
+    font-size: 0.6em !important;
+  }
+  .post-tri-side .post-band-caption {
+    font-size: 0.75em;
+  }
+  .post-tri-side .post-cta {
+    font-size: 0.6875em;
+    letter-spacing: 0.04em;
+    padding: 0.55em 0.35em;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .post-band::before {
+  .post-band::before,
+  .post-tri-panel::before {
     transition: none;
   }
   .post-band:hover::before {
     transform: none;
+  }
+}
+
+/* The months as a list (SectionContents in BlogPage): a row per month,
+   its name, caption and a caret, between hairlines. A row opens the
+   month's text in a panel laid over the list in the same spot, on the
+   month's photo under a dark wash. The list and the panel share one grid
+   cell, so the block is as tall as whichever is taller; the list stays in
+   place behind the panel, hidden, so the page below never jumps. */
+.post-contents {
+  /* Space between the panel's edges and its text, left and right; the
+     list's rows are inset the same so a month's name sits in one place
+     open or closed. */
+  --contents-inset: clamp(2rem, 3.5vw, 3rem);
+  display: grid;
+  margin-top: 3.5rem;
+  /* Clear of the site's fixed header when a panel scrolls into view. */
+  scroll-margin-top: 6rem;
+}
+.post-contents-list,
+.post-contents-panel {
+  grid-area: 1 / 1;
+}
+.post-contents-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-border);
+}
+.post-contents.is-open .post-contents-list {
+  visibility: hidden;
+}
+.post-contents-list li {
+  border-bottom: 1px solid var(--color-border);
+}
+/* The name column is as wide as the panel's heading column, so a month's
+   name sits in the same place open or closed. */
+.post-contents-row {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr) auto 1.25rem;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+  padding: 1.1rem var(--contents-inset);
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.post-contents-row:hover,
+.post-contents-row:focus-visible {
+  background-color: rgba(var(--tint), 0.05);
+  outline: none;
+}
+.post-contents-row:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--color-saffron);
+}
+.post-contents-name {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-cream);
+}
+/* The list and the open panel show the Devanagari name alone, without the
+   romanised one under it (month()'s second span). month() sets display
+   inline, hence the !important. */
+.post-contents-name > span + span,
+.post-contents-head .post-section-title > span + span {
+  display: none !important;
+}
+/* In the marigold the romanised names were, so the month's English span
+   takes their place in the colour scheme. */
+.post-contents-caption {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--color-marigold);
+}
+/* A month's season, just before the caret. Rows without one leave that
+   column empty, so the caret stays in the last column either way. */
+.post-contents-season {
+  grid-column: 3;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-style: italic;
+  line-height: 1.45;
+  white-space: nowrap;
+  color: var(--color-marigold);
+}
+.post-contents-season [lang="ne"] {
+  font-family: var(--font-devanagari);
+  font-style: normal;
+}
+.post-contents-caret {
+  grid-column: 4;
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: var(--color-saffron);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+.post-contents-row:hover .post-contents-caret {
+  transform: translateY(2px);
+}
+
+/* The open month, laid on a 3 x 3 grid its nine photos fill: the
+   Devanagari name in the middle of the top-centre cell, the text across
+   the whole middle row
+   with the month's button right under where it ends, and the close
+   triangle at the foot of the bottom-right cell. The three rows are always
+   the same height, so every photo is the same size whether text sits on
+   it or not: each a third of the panel, or as tall as the text if the
+   text needs more. Hairline seams between the cells. A month without
+   `panelGrid` keeps the same layout over its one `image` instead. */
+.post-contents-panel {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  animation: post-contents-in 0.35s ease;
+}
+.post-contents-panel::before,
+.post-contents-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.post-contents-panel::before {
+  background: var(--band-image) var(--band-position, center) / cover
+    no-repeat;
+  filter: var(--photo-rest);
+}
+.post-contents-panel::after {
+  background: rgba(var(--scrim), 0.86);
+}
+.post-contents-panel.has-grid::before,
+.post-contents-panel.has-grid::after {
+  content: none;
+}
+/* One photo per cell, muted like the post's other photos, each under the
+   same near-solid wash the text needs. Hovering a photo above or below the
+   text shows it as taken, in full colour; the middle row stays dark so the
+   text keeps reading. */
+.post-contents-cell {
+  position: relative;
+  z-index: -1;
+  min-height: 0;
+  overflow: hidden;
+}
+.post-contents-cell img,
+.post-contents-cell::after {
+  position: absolute;
+  inset: 0;
+}
+.post-contents-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: var(--photo-rest);
+  transition: filter 0.6s ease;
+}
+/* Behind a photo shown whole: the same photo, blurred, filling the cell,
+   so the gaps beside it read as the photo's own colours. Grown a little
+   so the blur has no soft edge. */
+.post-contents-cell .post-contents-cell-fill {
+  inset: -1.5rem;
+  width: calc(100% + 3rem);
+  height: calc(100% + 3rem);
+  filter: var(--photo-rest) blur(18px);
+}
+.post-contents-cell::after {
+  content: "";
+  background-color: rgba(var(--scrim), 0.86);
+  transition: background-color 0.6s ease;
+}
+/* A photo's caption, a marigold sticker slapped on its lower left at a
+   tilt. Hidden until the photo is hovered, then it springs up and
+   straightens a little as the photo comes back in colour. Odd and even
+   cells lean opposite ways. */
+.post-contents-sticker {
+  position: absolute;
+  z-index: 1;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  padding: 0.35rem 0.6rem 0.4rem;
+  background: var(--color-marigold);
+  color: var(--color-paper-ink);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  /* Lines break only where the caption says, so the sticker hugs them. */
+  white-space: nowrap;
+  box-shadow:
+    0 1px 0 rgba(var(--shade), 0.25),
+    0 8px 20px rgba(var(--shade), 0.45);
+  --tilt: -3deg;
+  opacity: 0;
+  transform: translateY(0.75rem) rotate(calc(var(--tilt) * 2)) scale(0.9);
+  transform-origin: left bottom;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.post-contents-cell:nth-child(even) .post-contents-sticker {
+  --tilt: 2.5deg;
+}
+/* Pinned to the top right corner instead, for a photo whose foot and top
+   left both hold what matters. It hangs from that corner, so it tilts and
+   springs from there. */
+.post-contents-cell .post-contents-sticker--top-right {
+  top: 1.25rem;
+  right: 1.25rem;
+  bottom: auto;
+  left: auto;
+  text-align: right;
+  transform-origin: right top;
+}
+/* The bottom-right photo has the close triangle at its foot (2rem up,
+   2.5rem tall); its sticker sits just above it, so a long caption on a
+   narrow screen can't run into it. */
+.post-contents-cell:nth-child(9) .post-contents-sticker {
+  bottom: 5.25rem;
+}
+@media (min-width: 901px) and (hover: hover) {
+  .post-contents-cell--row1:hover img,
+  .post-contents-cell--row3:hover img {
+    filter: none;
+  }
+  .post-contents-cell--row1:hover::after,
+  .post-contents-cell--row3:hover::after {
+    background-color: transparent;
+  }
+  .post-contents-cell--row1:hover .post-contents-cell-fill,
+  .post-contents-cell--row3:hover .post-contents-cell-fill {
+    filter: blur(18px) brightness(0.75);
+  }
+  .post-contents-cell:hover .post-contents-sticker {
+    opacity: 1;
+    transform: rotate(var(--tilt));
+  }
+}
+/* The name sits on its photo the way the mood board's month names do,
+   centred, over the same soft shadow so it holds on bright and dark frames
+   alike. */
+.post-contents-head {
+  grid-row: 1;
+  grid-column: 2;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  /* So the photo under the name still answers to hover. */
+  pointer-events: none;
+}
+.post-contents-head .post-section-title {
+  outline: none;
+  font-size: 2.75rem;
+  text-shadow:
+    0 1px 3px rgba(var(--shade), 0.75),
+    0 2px 12px rgba(var(--shade), 0.85);
+  transition: opacity 0.6s ease;
+}
+/* Hovering the photo under the name lets that photo have the cell: the
+   name fades back as the photo comes up in colour. The head comes after
+   the cells, hence the sibling selector. */
+@media (min-width: 901px) and (hover: hover) {
+  .post-contents-cell:nth-child(2):hover
+    ~ .post-contents-head
+    .post-section-title {
+    opacity: 0.3;
+  }
+}
+.post-contents-text {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  padding: 2.5rem var(--contents-inset) 1.75rem;
+}
+.post-contents-cta {
+  text-align: right;
+}
+.post-contents-close {
+  grid-row: 3;
+  grid-column: 3;
+  align-self: end;
+  justify-self: end;
+  margin: 0 var(--contents-inset) 2rem 0;
+}
+/* The close triangle, on the same light disc as the scroll button. */
+.post-contents-close {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-cream);
+  color: var(--color-paper-ink);
+  box-shadow: 0 6px 18px rgba(var(--shade), 0.35);
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+.post-contents-close svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.post-contents-close:hover {
+  background-color: var(--color-saffron);
+  transform: translateY(-1px);
+}
+.post-contents-close:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 3px;
+}
+@keyframes post-contents-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* On a narrow screen the text is several times taller than a third of the
+   panel, so three rows each as tall as it would leave long empty rows above
+   and below. Instead the nine photos lie behind the panel in three equal
+   rows of their own, and the heading, text and triangle run down over them
+   in order, the triangle at the foot. Every photo takes the same even wash,
+   since the text can sit over any row. */
+@media (max-width: 900px) {
+  .post-contents-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  .post-contents-cell {
+    position: absolute;
+    top: calc(var(--r) * (100% + 2px) / 3);
+    left: calc(var(--c) * (100% + 2px) / 3);
+    width: calc((100% - 4px) / 3);
+    height: calc((100% - 4px) / 3);
+  }
+  .post-contents-cell::after {
+    background-color: rgba(var(--scrim), 0.8);
+  }
+  .post-contents-head {
+    padding: 2.25rem var(--contents-inset) 1.25rem;
+  }
+  .post-contents-text {
+    padding: 0.75rem var(--contents-inset) 1.5rem;
+  }
+  .post-contents-close {
+    align-self: flex-end;
+    margin-top: auto;
+    margin-bottom: 1.5rem;
+  }
+}
+/* On a phone each row is sized in em off a font tied to the screen width,
+   so a row keeps the line breaks it has on the 430px reference phone and
+   scales down whole on a narrower one. */
+/* A phone's photos: its own six, 3 rows of 2, in place of the nine. */
+.post-contents-cell--phone {
+  display: none;
+}
+@media (max-width: 640px) {
+  .post-contents-cell--wide {
+    display: none;
+  }
+  .post-contents-cell--phone {
+    display: block;
+    left: calc(var(--c) * (100% + 2px) / 2);
+    width: calc((100% - 2px) / 2);
+  }
+}
+@media (max-width: 640px) {
+  /* Scales with the room between the 2rem gutters, not the whole screen,
+     so every phone is a true scaled copy of the 430px one (366px = 22.875em
+     of 16px there) and a caption that sits on one line there, like
+     "november through december", does on every phone. */
+  .post-contents-list {
+    font-size: min(1rem, calc((100vw - 4rem) / 22.875));
+  }
+  /* No room beside the caption here, so the season takes a line under it;
+     the second row is empty, and gapless, on months without one. */
+  .post-contents-row {
+    grid-template-columns: 6.5em minmax(0, 1fr) 1.1em;
+    grid-template-areas:
+      "name caption caret"
+      "name season caret";
+    gap: 0 1.25em;
+    padding: 0.95em 0.25em;
+  }
+  .post-contents-name {
+    grid-area: name;
+    font-size: 1.25em;
+  }
+  .post-contents-caption {
+    grid-area: caption;
+    font-size: 0.875em;
+  }
+  .post-contents-season {
+    grid-area: season;
+    font-size: 0.875em;
+    margin-top: 0.15em;
+  }
+  .post-contents-caret {
+    grid-area: caret;
+    width: 1.1em;
+    height: 1.1em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-contents-panel {
+    animation: none;
+  }
+  .post-contents-cell img,
+  .post-contents-cell::after,
+  .post-contents-sticker,
+  .post-contents-head .post-section-title {
+    transition: none;
+  }
+  .post-contents-row,
+  .post-contents-caret,
+  .post-contents-close {
+    transition: none;
   }
 }
 
@@ -1531,7 +2647,7 @@ body {
   min-width: 0;
   padding: 0.9rem 1.25rem;
   border: 1px solid var(--color-border);
-  background-color: rgba(248, 236, 224, 0.05);
+  background-color: rgba(var(--tint), 0.05);
   text-decoration: none;
   color: inherit;
   transition:
@@ -1543,9 +2659,9 @@ body {
 .post-music:hover,
 .post-music:focus-visible {
   border-color: var(--color-marigold);
-  background-color: rgba(248, 236, 224, 0.1);
+  background-color: rgba(var(--tint), 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px -14px rgba(28, 8, 6, 0.9);
+  box-shadow: 0 10px 24px -14px rgba(var(--shade), 0.9);
 }
 .post-music:focus-visible {
   outline: 2px solid var(--color-marigold);
@@ -1577,9 +2693,9 @@ body {
 .post-music--photo::after {
   background: linear-gradient(
     to right,
-    rgba(51, 32, 26, 0.92) 0%,
-    rgba(51, 32, 26, 0.8) 45%,
-    rgba(51, 32, 26, 0.5) 100%
+    rgba(var(--scrim), 0.92) 0%,
+    rgba(var(--scrim), 0.8) 45%,
+    rgba(var(--scrim), 0.5) 100%
   );
 }
 .post-music--photo:hover::before,
@@ -1600,7 +2716,7 @@ body {
   display: block;
   width: 2.75rem;
   height: 1.96rem;
-  filter: drop-shadow(0 4px 10px rgba(28, 8, 6, 0.45));
+  filter: drop-shadow(0 4px 10px rgba(var(--shade), 0.45));
   transition:
     transform 0.25s ease,
     filter 0.25s ease;
@@ -1782,6 +2898,13 @@ body {
   .twocents-grid > article {
     flex: 0 0 82%;
     scroll-snap-align: start;
+  }
+}
+
+/* Text kept off phones, e.g. a line that points at hover. */
+@media (max-width: 640px) {
+  .desktop-only {
+    display: none;
   }
 }
 
