@@ -219,11 +219,29 @@ function SectionContents({
   const grid = section?.panelGrid?.map((cell) =>
     typeof cell === "string" ? { src: cell } : cell,
   )
-  // Six for a phone: the month's own list, or six of the nine.
+  // A photo's loop plays while it is hovered, on a screen that hovers and
+  // only without reduced motion; it fades in once it is really playing and
+  // starts from the top each time.
+  const playCellVideo = (e: React.MouseEvent<HTMLDivElement>) => {
+    const ok = window.matchMedia(
+      "(hover: hover) and (prefers-reduced-motion: no-preference)",
+    ).matches
+    const video = e.currentTarget.querySelector("video")
+    if (ok && video) video.play().catch(() => {})
+  }
+  const stopCellVideo = (e: React.MouseEvent<HTMLDivElement>) => {
+    const video = e.currentTarget.querySelector("video")
+    if (!video) return
+    video.pause()
+    video.currentTime = 0
+    video.classList.remove("is-playing")
+  }
+  // Six for a phone: the month's own list, or the top and bottom rows of
+  // the nine.
   const phoneGrid =
     section?.panelGridPhone ??
     grid
-      ?.filter((_, k) => [0, 2, 3, 4, 6, 8].includes(k))
+      ?.filter((_, k) => [0, 1, 2, 6, 7, 8].includes(k))
       .map((cell) => cell.src)
 
   return (
@@ -293,12 +311,14 @@ function SectionContents({
               grid, so the text's row of photos grows with the text. */}
           {grid
             ?.slice(0, 9)
-            .map(({ src, caption, captionTopRight, position, whole }, k) => (
+            .map(({ src, caption, captionTopRight, position, whole, video }, k) => (
               <div
                 key={k}
                 className={`post-contents-cell post-contents-cell--wide post-contents-cell--row${
                   Math.floor(k / 3) + 1
                 }`}
+                onMouseEnter={video ? playCellVideo : undefined}
+                onMouseLeave={video ? stopCellVideo : undefined}
                 style={
                   {
                     gridRow: Math.floor(k / 3) + 1,
@@ -327,6 +347,20 @@ function SectionContents({
                     objectFit: whole ? "contain" : undefined,
                   }}
                 />
+                {video && (
+                  <video
+                    className="post-contents-cell-video"
+                    src={video}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    style={{ objectPosition: position }}
+                    onPlaying={(e) =>
+                      e.currentTarget.classList.add("is-playing")
+                    }
+                  />
+                )}
                 {caption && (
                   <span
                     className={`post-contents-sticker${

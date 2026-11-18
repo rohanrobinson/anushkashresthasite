@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import gharMoolGhar from "./assets/ghar/mool-ghar-diyo.jpg";
+import gharAgamChhen from "./assets/ghar/mool-ghar-red-saris.jpg";
 import gharPatanAerial from "./assets/ghar/mangal-bazar-patan.jpg";
 import moodPujaMarigold from "./assets/mood/02-puja-marigold.jpg";
 import gharDashain from "./assets/ghar/dashain-tika-dog.jpg";
@@ -14,16 +15,12 @@ import gharBahra from "./assets/ghar/bahra-with-baba.jpg";
 import musicRosePuja from "./assets/ghar/music-rose-puja.jpg";
 import patanAerialVideo from "./assets/hero/patan-durbar-aerial.mp4";
 import patanAerialPoster from "./assets/hero/patan-durbar-aerial.jpg";
-import gharFacade from "./assets/ghar/mool-ghar-facade.jpg";
 import gharPujaThali from "./assets/ghar/puja-thali-rose.jpg";
 import moodNewarTattoo from "./assets/mood/01-newar-tattoo.jpg";
 import lakeWater from "./assets/hero/water.jpg";
 import bikramSambatVideo from "./assets/hero/bikram-sambat-cover.mp4";
 import bikramSambatPoster from "./assets/hero/bikram-sambat-cover.jpg";
 import basecamp from "./assets/footer-media/basecamp-2021.jpg";
-import gharTreePose from "./assets/ghar/tree-pose-lake.jpg";
-import moodRamayana from "./assets/mood/09-ramayana-tupac.jpg";
-import heroPainting from "./assets/hero/painting.jpg";
 import moolGharMood01 from "./assets/ghar/MG/mg-01.jpg";
 import moolGharMood02 from "./assets/ghar/MG/mg-02.jpg";
 import moolGharMood03 from "./assets/ghar/MG/mg-03.jpg";
@@ -111,6 +108,41 @@ import bsJesthaSummitRest from "./assets/ghar/BS/bs-jestha-summit-rest.jpg";
 import bsJesthaNamche from "./assets/ghar/BS/bs-jestha-namche.jpg";
 import bsJesthaAmaDablamRiver from "./assets/ghar/BS/bs-jestha-ama-dablam-river.jpg";
 import bsJesthaAmaDablamDawn from "./assets/ghar/BS/bs-jestha-ama-dablam-dawn.jpg";
+import bsAsarHappuRooftop from "./assets/ghar/BS/bs-asar-happu-rooftop.jpg";
+import bsAsarCafeWindow from "./assets/ghar/BS/bs-asar-cafe-window.jpg";
+import bsAsarHappuGlance from "./assets/ghar/BS/bs-asar-happu-glance.jpg";
+import bsAsarMudShout from "./assets/ghar/BS/bs-asar-mud-shout.jpg";
+import bsAsarMudWade from "./assets/ghar/BS/bs-asar-mud-wade.jpg";
+import bsAsarMudCheer from "./assets/ghar/BS/bs-asar-mud-cheer.jpg";
+import bsAsarSwayambhuLaugh from "./assets/ghar/BS/bs-asar-swayambhu-laugh.jpg";
+import bsAsarSwayambhuDome from "./assets/ghar/BS/bs-asar-swayambhu-dome.jpg";
+import bsAsarSwayambhuCalm from "./assets/ghar/BS/bs-asar-swayambhu-calm.jpg";
+import bsShrawanHappuMango from "./assets/ghar/BS/bs-shrawan-happu-mango.jpg";
+import bsShrawanSwayambhuBuddha from "./assets/ghar/BS/bs-shrawan-swayambhu-buddha.jpg";
+import bsShrawanRedBangles from "./assets/ghar/BS/bs-shrawan-red-bangles.jpg";
+import bsShrawanCafeButterflies from "./assets/ghar/BS/bs-shrawan-cafe-butterflies.jpg";
+import bsShrawanPuff from "./assets/ghar/BS/bs-shrawan-puff.jpg";
+import bsShrawanOfficeWindow from "./assets/ghar/BS/bs-shrawan-office-window.jpg";
+import bsShrawanCurtainWindow from "./assets/ghar/BS/bs-shrawan-curtain-window.jpg";
+import bsShrawanSkyBird from "./assets/ghar/BS/bs-shrawan-sky-bird.jpg";
+import bsShrawanPoppyCurtain from "./assets/ghar/BS/bs-shrawan-poppy-curtain.jpg";
+import bsBhadauPatanLions from "./assets/ghar/BS/bs-bhadau-patan-lions.jpg";
+import bsBhadauPatanLoop from "./assets/ghar/BS/bs-bhadau-patan-loop.mp4";
+import bsBhadauPatanDog from "./assets/ghar/BS/bs-bhadau-patan-dog.jpg";
+import bsBhadauPatanPagoda from "./assets/ghar/BS/bs-bhadau-patan-pagoda.jpg";
+import bsBhadauGhatNight1 from "./assets/ghar/BS/bs-bhadau-ghat-night-1.jpg";
+import bsBhadauGhatNight2 from "./assets/ghar/BS/bs-bhadau-ghat-night-2.jpg";
+import bsBhadauGhatNight3 from "./assets/ghar/BS/bs-bhadau-ghat-night-3.jpg";
+import bsBhadauGosaikundaBeanie from "./assets/ghar/BS/bs-bhadau-gosaikunda-beanie.jpg";
+import bsBhadauGosaikundaOffering from "./assets/ghar/BS/bs-bhadau-gosaikunda-offering.jpg";
+import bsBhadauGosaikundaBreakfast from "./assets/ghar/BS/bs-bhadau-gosaikunda-breakfast.jpg";
+import bsAsojFeetBaa from "./assets/ghar/BS/bs-asoj-feet-baa.jpg";
+import bsAsojButterLamps from "./assets/ghar/BS/bs-asoj-butter-lamps.jpg";
+import bsAsojPaan from "./assets/ghar/BS/bs-asoj-paan.jpg";
+import bsAsojPujaSpread from "./assets/ghar/BS/bs-asoj-puja-spread.jpg";
+import bsAsojStreetGlance from "./assets/ghar/BS/bs-asoj-street-glance.jpg";
+import bsAsojStreetStride from "./assets/ghar/BS/bs-asoj-street-stride.jpg";
+import bsAsojStreetPause from "./assets/ghar/BS/bs-asoj-street-pause.jpg";
 import bsFalgunRooftopCafe from "./assets/ghar/BS/bs-falgun-rooftop-cafe.jpg";
 import bsFalgunAarti1 from "./assets/ghar/BS/bs-falgun-aarti-1.jpg";
 import bsFalgunAarti2 from "./assets/ghar/BS/bs-falgun-aarti-2.jpg";
@@ -164,7 +196,10 @@ export type BlogSection = {
      shows the photo uncropped, on a blurred copy of itself, for a subject
      too tall or wide for any crop of the cell to hold. `captionTopRight`
      pins the caption to the photo's top right corner instead, for a photo
-     whose foot and top left both hold what matters. */
+     whose foot and top left both hold what matters. `video` is a short
+     muted loop (H.264 .mp4) that fades in over the photo and plays while
+     it is hovered on a wide screen; phones and reduced motion keep the
+     photo. It takes the photo's `position`. */
   panelGrid?: (
     | string
     | {
@@ -173,12 +208,14 @@ export type BlogSection = {
         captionTopRight?: boolean;
         position?: string;
         whole?: boolean;
+        video?: string;
       }
   )[];
   /* Optional: the photos behind the open panel on a phone, 3 rows of 2,
      read left to right, two to a line in the data. Without it a phone
-     takes six of `panelGrid`: the outer two of its top and bottom rows,
-     and the left one and the month's own photo from its middle row. */
+     takes the top and bottom rows of `panelGrid`, slots 1, 2, 3, 7, 8 and
+     9 in order: the captioned photos, since the text covers the middle
+     row on a wide screen. */
   panelGridPhone?: string[];
   /* Optional button under the paragraphs. With no `href` it shows as
      coming soon and does not click, for a page that is not written yet. */
@@ -412,9 +449,10 @@ const MOOL_GHAR: BlogPost = {
     {
       heading: "The forbidden room: Agam Chhen",
       image: {
-        src: gharMoolGhar,
-        alt: "A diyo burning on the floor among marigold petals and sindoor",
+        src: gharAgamChhen,
+        alt: "Thirteen women in red saris gathered at the carved doorway of the mool ghar",
         caption: "as close to the agam chhen as a camera gets",
+        position: "center 15%",
       },
       paragraphs: [
         <>
@@ -751,12 +789,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
         { src: bsKartikKumariPuja, caption: "scene from post-kumari pooja" },
         { src: bsKartikTiharLights, caption: "tihar evenings" },
       ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        gharDashain, bsKartikThapicha,
-        bsKartikMhaPuja, bsKartikDashainPuja,
-        gharHimalHome, bsKartikMarigolds,
-      ],
       paragraphs: [
         <>
           We're in Kartik 2083, mid-festival season: Bada Dashain has recently
@@ -811,12 +843,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
         { src: bsMangshirGosaikundaCalf, caption: "somewhere in Rasuwa" },
         { src: bsMangshirKalinchowk, caption: "somewhere in Dolakha" },
         { src: bsMangshirEbcMasked, caption: "somewhere in Khumbu" },
-      ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        bsMangshirPujaSpread, bsMangshirSagun,
-        bsMangshirPujaView, bsMangshirWeddingBow,
-        bsMangshirIDoCrew, bsMangshirSindoor,
       ],
       paragraphs: [
         <>
@@ -878,12 +904,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
           caption: "perfect spot spotted",
         },
         { src: bsPoushHappuAndNush, caption: "winter sun, shared with happu" },
-      ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        bsPoushUltralight, bsPoushYomari,
-        bsPoushPhewa, bsPoushJeri,
-        bsPoushSunbaskKitchen, bsPoushThali,
       ],
       paragraphs: [
         <>
@@ -960,12 +980,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
         // Two laddus stacked: no crop of a wide cell holds both.
         { src: bsMaghLaddus, whole: true, caption: "sankranti ladoo, in all sizes" },
         { src: bsMaghTribeni, caption: "somewhere in tribeni" },
-      ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        bsMaghShrine, bsMaghChakuBite,
-        bsMaghRiverDip, bsMaghSagunBowl,
-        bsMaghTempleMum, bsMaghButterLamps,
       ],
       paragraphs: [
         <>
@@ -1045,12 +1059,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
           position: "center 90%",
           caption: "dessert #2",
         },
-      ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        bsFalgunRooftopCafe, bsFalgunDiyo,
-        bsFalgunSparklers, bsFalgunAarti2,
-        bsFalgunAarti1, bsFalgunAarti3,
       ],
       paragraphs: [
         <>
@@ -1141,12 +1149,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
           caption: "chaite dashain at mool ghar",
         },
       ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        bsChaitraHoliYellow, bsChaitraRamNavami,
-        bsChaitraHoliBlue, bsChaitraSamayBaji,
-        bsChaitraYomariPlate, bsChaitraLeafPlate,
-      ],
       paragraphs: [
         <>
           Chaitra is the last page of the Nepali year: our December, but in
@@ -1208,12 +1210,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
         },
         { src: bsBaisakhNewarTattoo, caption: "inked like a temple window" },
         { src: bsBaisakhAnklets, caption: "mother's day in may" },
-      ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        bsBaisakhRooftopTerrace, bsBaisakhJatraNight,
-        bsBaisakhPatanSquare, bsBaisakhGreenHills,
-        bsBaisakhFeetUp, bsBaisakhPineForest,
       ],
       paragraphs: [
         <>
@@ -1287,12 +1283,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
         },
         { src: bsJesthaAmaDablamDawn, caption: "dawn, then the climb" },
       ],
-      // On a phone: 3 rows of 2, the first six in the same order.
-      panelGridPhone: [
-        bsJesthaYak, bsJesthaCairns,
-        bsJesthaPorterTrail, bsJesthaTrekMap,
-        bsJesthaChortenTrail, bsJesthaSummitRest,
-      ],
       paragraphs: [
         <>
           Did I mention this is Nepal's second trekking season? If you missed
@@ -1315,12 +1305,11 @@ const FESTIVAL_CALENDAR: BlogPost = {
       cta: { label: "Step into Jestha →" },
     },
     {
-      heading: month("असार", "Ashad"),
+      heading: month("असार", "Ashadh"),
       image: {
-        src: lakeWater,
-        alt: "Bare feet over the bow of a blue wooden boat on lake water",
+        src: bsAsarMudWade,
+        alt: "Wading through a muddy paddy field in black overalls and an organizer badge, mud fest crowd behind",
         caption: "june through july",
-        position: "center 55%",
       },
       season: { en: "summer", ne: "ग्रिष्म" },
       // Stand-ins for the side panels; swap for the real photos.
@@ -1336,18 +1325,41 @@ const FESTIVAL_CALENDAR: BlogPost = {
       ],
       scrollWindow: { lines: 4, wordsPerMinute: 180 },
       // Behind the open panel, 3 x 3, read left to right; the middle one
-      // is the month's own photo. Grey skies over Patan for Bhoto Jatra, grey-green water, beaten rice
-      // for dahi chiura, and muddy-garden days.
+      // is the month's own photo. Happu on the roof under monsoon clouds, a
+      // rainy-day cafe window, Happu again, three from the paddy-planting
+      // mud fest, and Swayambhu under grey skies.
       panelGrid: [
-        gharPatanAerial, gharChowk, gharTreePose,
-        moolGharMood04, lakeWater, gharGosaikunda,
-        moolGharMood10, moolGharMood01, gharPikhaLakhu,
-      ],
-      // On a phone: 3 rows of 2.
-      panelGridPhone: [
-        gharPatanAerial, gharTreePose,
-        moolGharMood04, lakeWater,
-        gharChowk, moolGharMood01,
+        // Happu sits right of centre in both rooftop frames.
+        {
+          src: bsAsarHappuRooftop,
+          position: "58% center",
+          caption: "happu, on cloud watch",
+        },
+        { src: bsAsarCafeWindow, caption: "rainy day, window seat" },
+        {
+          src: bsAsarHappuGlance,
+          position: "66% center",
+          caption: "grey skies, white floof",
+        },
+        bsAsarMudShout, bsAsarMudWade, bsAsarMudCheer,
+        // Low enough for her face, which sits under the stupa's eyes in
+        // both of these.
+        {
+          src: bsAsarSwayambhuLaugh,
+          position: "center 62%",
+          caption: "monsoon giggles",
+        },
+        // The stupa's eyes and the top of its dome.
+        {
+          src: bsAsarSwayambhuDome,
+          position: "center 30%",
+          caption: "swayambhu, flags flying",
+        },
+        {
+          src: bsAsarSwayambhuCalm,
+          position: "center 66%",
+          caption: "okay, serious face now",
+        },
       ],
       paragraphs: [
         <>
@@ -1369,10 +1381,9 @@ const FESTIVAL_CALENDAR: BlogPost = {
     {
       heading: month("साउन", "Shrawan"),
       image: {
-        src: gharPatanAerial,
-        alt: "Patan Durbar Square from above under a heavy grey sky",
+        src: bsShrawanPuff,
+        alt: "A lit joint held between the fingers against a pale wall",
         caption: "july through august",
-        position: "center 40%",
       },
       season: { en: "early monsoon", ne: "बर्षा" },
       // Stand-ins for the side panels; swap for the real photos.
@@ -1388,18 +1399,29 @@ const FESTIVAL_CALENDAR: BlogPost = {
       ],
       scrollWindow: { lines: 4, wordsPerMinute: 180 },
       // Behind the open panel, 3 x 3, read left to right; the middle one
-      // is the month's own photo. Bangles and puja, the women of Teej, a lesson for Guru Purnima, and
-      // food for kheer khane din.
+      // is the month's own photo. Happu eyeing the first mangoes, a Buddha
+      // at Swayambhu under monsoon clouds, red bangles, a cafe window strung
+      // with paper butterflies, a puff, a city view from an office window,
+      // curtains open on the trees, a bird in a blue break in the clouds,
+      // and afternoon light through a poppy curtain.
       panelGrid: [
-        musicRosePuja, moolGharMood06, gharPikhaLakhu,
-        moolGharMood03, gharPatanAerial, moolGharMood12,
-        heroPainting, moolGharMood13, gharHimalHome,
-      ],
-      // On a phone: 3 rows of 2.
-      panelGridPhone: [
-        musicRosePuja, moolGharMood06,
-        moolGharMood03, gharPatanAerial,
-        gharPikhaLakhu, heroPainting,
+        // High enough for Happu's ears and the mango, under the sticker.
+        {
+          src: bsShrawanHappuMango,
+          position: "center 30%",
+          caption: "mango season, happu on duty",
+        },
+        // Low, for the Buddha at the foot of the frame.
+        {
+          src: bsShrawanSwayambhuBuddha,
+          position: "center 85%",
+          caption: "buddha, minding the monsoon",
+        },
+        { src: bsShrawanRedBangles, caption: "shrawan bangles, red edition" },
+        bsShrawanCafeButterflies, bsShrawanPuff, bsShrawanOfficeWindow,
+        { src: bsShrawanCurtainWindow, caption: "curtains open, rain on hold" },
+        { src: bsShrawanSkyBird, caption: "a break in the clouds" },
+        { src: bsShrawanPoppyCurtain, caption: "afternoon nap lighting" },
       ],
       paragraphs: [
         <>
@@ -1422,10 +1444,9 @@ const FESTIVAL_CALENDAR: BlogPost = {
     {
       heading: month("भदौ", "Bhadra"),
       image: {
-        src: moodNewarTattoo,
-        alt: "Traditional Newar leg tattoos of a temple window and peacocks",
+        src: bsBhadauGhatNight2,
+        alt: "A crowd on river ghat steps at night, lamps lit around a deity carried to the water's edge",
         caption: "august through september",
-        position: "center 40%",
       },
       season: { en: "monsoon", ne: "बर्षा" },
       // Stand-ins for the side panels; swap for the real photos.
@@ -1441,18 +1462,45 @@ const FESTIVAL_CALENDAR: BlogPost = {
       ],
       scrollWindow: { lines: 4, wordsPerMinute: 180 },
       // Behind the open panel, 3 x 3, read left to right; the middle one
-      // is the month's own photo. Gosaikunda and the sacred thread for Janai Purnima, Mangalbazar's
-      // jatras, and food.
+      // is the month's own photo. Three in Patan Durbar Square, Mangalbazar's
+      // own: cross-legged by the stone lions, laughing with a street dog,
+      // and looking out at the pagoda; a night on the river ghat as a deity
+      // goes to the water; and Gosaikunda for Janai Purnima: by the lake,
+      // waving at the peaks, and breakfast above the water.
       panelGrid: [
-        gharGosaikunda, moolGharMood03, gharTreePose,
-        patanAerialPoster, moodNewarTattoo, gharChowk,
-        moolGharMood08, gharFacade, moolGharMood04,
-      ],
-      // On a phone: 3 rows of 2.
-      panelGridPhone: [
-        gharGosaikunda, moolGharMood03,
-        patanAerialPoster, moodNewarTattoo,
-        moolGharMood08, gharChowk,
+        // She sits left of centre in a wide frame; on hover, a loop of her
+        // in the square with the pigeons lifting behind.
+        {
+          src: bsBhadauPatanLions,
+          position: "30% center",
+          caption: "by the lions, pigeons on duty",
+          video: bsBhadauPatanLoop,
+        },
+        // High, so her face sits below the month's name, which is centred
+        // on this cell.
+        {
+          src: bsBhadauPatanDog,
+          position: "center 30%",
+          caption: "made a friend in the square",
+        },
+        // She sits at the right edge of a wide frame.
+        {
+          src: bsBhadauPatanPagoda,
+          position: "100% center",
+          caption: "home turf, golden hour",
+        },
+        bsBhadauGhatNight1, bsBhadauGhatNight2, bsBhadauGhatNight3,
+        { src: bsBhadauGosaikundaBeanie, caption: "gosaikunda, pom-pom approved" },
+        // High, for her raised hand and the snowy peak behind it.
+        {
+          src: bsBhadauGosaikundaOffering,
+          position: "center 20%",
+          caption: "hello from 4,380m",
+        },
+        {
+          src: bsBhadauGosaikundaBreakfast,
+          caption: "breakfast, lake view included",
+        },
       ],
       paragraphs: [
         <>
@@ -1474,12 +1522,11 @@ const FESTIVAL_CALENDAR: BlogPost = {
       cta: { label: "Step into Bhadra →" },
     },
     {
-      heading: month("असोज", "Ashwin"),
+      heading: month("असोज", "Asoj"),
       image: {
-        src: moodPujaMarigold,
-        alt: "Marigolds, diyo, sindoor and incense laid out on brick for puja",
+        src: bsAsojStreetStride,
+        alt: "Walking up the middle of a Kathmandu street in a hat and mask, power lines overhead and a green hill ahead",
         caption: "september through october",
-        position: "center 70%",
       },
       season: { en: "autumn", ne: "शरद" },
       // Stand-ins for the side panels; swap for the real photos.
@@ -1495,18 +1542,23 @@ const FESTIVAL_CALENDAR: BlogPost = {
       ],
       scrollWindow: { lines: 4, wordsPerMinute: 180 },
       // Behind the open panel, 3 x 3, read left to right; the middle one
-      // is the month's own photo. Father's Day with Baba, marigolds for Biswakarma, a durbar square
-      // for Indra Jatra, and the skies clearing for the trekking season.
+      // is the month's own photo. With Baba for Father's Day either side of
+      // two generations of feet on the rugs; three on a Kathmandu street
+      // under a tangle of wires as the skies clear; then butter lamps, paan
+      // with Baba before work, and a puja spread.
       panelGrid: [
-        gharBahra, gharDashain, gharIhi,
-        patanAerialPoster, moodPujaMarigold, moolGharMood09,
-        bikramSambatPoster, gharPikhaLakhu, basecamp,
-      ],
-      // On a phone: 3 rows of 2.
-      panelGridPhone: [
-        gharBahra, gharIhi,
-        gharDashain, moodPujaMarigold,
-        patanAerialPoster, bikramSambatPoster,
+        { src: gharBahra, caption: "father's day, throwback edition" },
+        { src: bsAsojFeetBaa, caption: "two generations, same rug" },
+        { src: gharIhi, caption: "baba's girl, ihi day" },
+        bsAsojStreetGlance, bsAsojStreetStride, bsAsojStreetPause,
+        { src: bsAsojButterLamps, caption: "lamps lit, wishes sent" },
+        { src: bsAsojPaan, caption: "paan o'clock with baba" },
+        // Low, for the rose and the hydrangea at the foot of the frame.
+        {
+          src: bsAsojPujaSpread,
+          position: "center 85%",
+          caption: "puja plates, fully loaded",
+        },
       ],
       paragraphs: [
         <>

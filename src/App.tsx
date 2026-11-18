@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, type ReactNode } from "react"
+import {
+  useState,
+  useEffect,
+  useRef,
+  isValidElement,
+  type ReactNode,
+} from "react"
 
 import BlogPage from "./BlogPage"
 import { getPost } from "./blogPosts"
@@ -142,6 +148,20 @@ function availableLabel(when: string) {
   })}`
 }
 
+/* A node's words with the markup taken off: the card shows a post's intro
+   as plain text, since a link inside it would fight the card's own. */
+function plainText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node)
+  if (Array.isArray(node)) return node.map(plainText).join("")
+  if (isValidElement(node))
+    return plainText((node.props as { children?: ReactNode }).children)
+  return ""
+}
+
+/* A card's blurb is the opening paragraph of its post, so the two never
+   drift apart; the card clamps it to three lines and ends it on "…". */
+const introOf = (slug: string) => plainText(getPost(slug)?.intro[0])
+
 // Card thumbnails are pre-cropped with the subject dead centre, so the cover
 // crop keeps it centred whatever shape the cell is; the posts use the originals.
 const GHAR_POSTS = [
@@ -153,7 +173,7 @@ const GHAR_POSTS = [
     title: "The meaning behind Mool Ghar",
     // 7:09 AM Central (CDT, UTC-5).
     availableOn: "2026-10-21T07:09:00-05:00",
-    body: "In my culture, mool ghar literally means \u201cancestral house,\u201d but the words hold much more than a building. It is the sacred, social and ritual centre of family life~ a place where ancestry, tradition and everyday life meet. If Newari culture is worth your time, come read along.",
+    body: introOf("mool-ghar"),
     date: "Oct 21, 2026",
   },
   {
@@ -172,7 +192,7 @@ const GHAR_POSTS = [
     ),
     // Nhu Daya Bhintuna, the first day of Nepal Sambat 1147.
     availableOn: "2026-11-10",
-    body: "Fun fact: I come from the future. Back home it is already 2083, and the new year lands in April, not January. Unless you are Newar, in which case it lands at Tihar, and it is 1147. Growing up, kheer meant Shrawan, Holi marked the end of winter, and Happu adorned with a marigold garland meant Tihar, heralding the beginning of winter. These are my twelve months, from Kartik round to Ashwin, remembered through the festivals, flavours, and little traditions that made them home.",
+    body: introOf("festival-calendar"),
     date: "Nov 10, 2026",
   },
   {
@@ -1013,8 +1033,11 @@ function Ghar() {
               className="ghar-card"
               onMouseEnter={() => setHovered(i)}
               onMouseLeave={() => setHovered(null)}
+              /* A post opens in its own tab, so the front page stays where
+                 the reader left it. */
               onClick={() => {
-                if (post.slug) window.location.hash = `#/blog/${post.slug}`
+                if (post.slug)
+                  window.open(`#/blog/${post.slug}`, "_blank", "noopener")
               }}
               style={{
                 gap: "0",
@@ -1085,6 +1108,25 @@ function Ghar() {
                   >
                     {post.tag}
                   </span>
+                  {/* The release date across from the tag, the way a post
+                      sets its date across from the mood board's label. A
+                      post that isn't out yet gives its date at the foot
+                      instead. */}
+                  {post.slug && (
+                    <time
+                      dateTime={post.availableOn}
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: "0.6875rem",
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color: "var(--color-quiet)",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {post.date}
+                    </time>
+                  )}
                 </div>
                 <h3
                   className="ghar-card-title"
@@ -1114,6 +1156,10 @@ function Ghar() {
                 {post.slug ? (
                   <a
                     href={`#/blog/${post.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    // The card would open a second tab otherwise.
+                    onClick={(e) => e.stopPropagation()}
                     style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "0.8125rem",
@@ -1589,6 +1635,11 @@ function Footer({ onHome }: { onHome: () => void }) {
    nothing is delivered until that link is clicked. */
 const SIGNUP_INBOX = "anushka8823@icloud.com"
 
+/* The popup shows at most once an hour per browser: the time it last
+   appeared is kept in localStorage and checked on every home-page visit. */
+const POPUP_SHOWN_KEY = "email-popup-shown-at"
+const POPUP_COOLDOWN_MS = 60 * 60 * 1000
+
 function EmailPopup() {
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState("")
@@ -1623,7 +1674,20 @@ function EmailPopup() {
   }
 
   useEffect(() => {
-    const timer = setTimeout(() => setOpen(true), 1000)
+    try {
+      const last = Number(localStorage.getItem(POPUP_SHOWN_KEY))
+      if (last && Date.now() - last < POPUP_COOLDOWN_MS) return
+    } catch {
+      // Storage blocked (private mode etc.): show it, just without the cap.
+    }
+    const timer = setTimeout(() => {
+      setOpen(true)
+      try {
+        localStorage.setItem(POPUP_SHOWN_KEY, String(Date.now()))
+      } catch {
+        // Storage blocked: nothing to remember.
+      }
+    }, 1000)
     return () => clearTimeout(timer)
   }, [])
 

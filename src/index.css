@@ -2253,11 +2253,10 @@ body {
   letter-spacing: -0.01em;
   color: var(--color-cream);
 }
-/* The list and the open panel show the Devanagari name alone, without the
-   romanised one under it (month()'s second span). month() sets display
-   inline, hence the !important. */
-.post-contents-name > span + span,
-.post-contents-head .post-section-title > span + span {
+/* The list shows the Devanagari name alone, without the romanised one under
+   it (month()'s second span). month() sets display inline, hence the
+   !important. The open panel shows both, on the month's photo. */
+.post-contents-name > span + span {
   display: none !important;
 }
 /* In the marigold the romanised names were, so the month's English span
@@ -2374,6 +2373,22 @@ body {
   content: "";
   background-color: rgba(var(--scrim), 0.86);
   transition: background-color 0.6s ease;
+}
+/* A photo's loop, over the photo and under the wash. Hidden until it is
+   actually playing (the class comes from script), so a slow first load
+   shows the photo rather than an empty frame. */
+.post-contents-cell .post-contents-cell-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.post-contents-cell .post-contents-cell-video.is-playing {
+  opacity: 1;
 }
 /* A photo's caption, a marigold sticker slapped on its lower left at a
    tilt. Hidden until the photo is hovered, then it springs up and
