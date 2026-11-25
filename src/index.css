@@ -146,18 +146,36 @@ body {
   height: clamp(8.5rem, 14vw, 14rem);
   background: transparent;
   overflow: hidden;
+  /* Feathers the courses into the pour at both ends. On the band rather than
+     the courses, so the fade stays put while the courses move under it. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
 }
-.brick-seam::before {
-  content: '';
+/* BrickSeam in App.tsx shifts this layer up by as much as one 120px repeat
+   of the pattern as the page scrolls, so the courses hold still while the
+   band moves over them; the extra 120px of height keeps the band covered at
+   every shift. */
+.brick-seam-courses {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(100% + 120px);
   pointer-events: none;
+  will-change: transform;
 }
-/* Two layers on the same 20px course: the gradient lays the oil sheen along
+/* One course, sliding sideways. It overhangs both edges by one 328px width
+   of the pattern, so it covers the band at any slide from -328px to 328px.
+   Two layers on the same 20px course: the gradient lays the oil sheen along
    the top of each brick and drops the joint into shadow, the SVG lays the
-   faces. `fixed` is what buys the parallax — the courses stay put while the
-   band scrolls over them. */
-.brick-seam::before {
+   faces. BrickSeam sets each course's background-position so the SVG shows
+   that course's row of faces. */
+.brick-seam-course {
+  position: absolute;
+  left: -328px;
+  width: calc(100% + 656px);
+  height: 20px;
+  will-change: transform;
   background-color: rgba(36, 16, 9, 0.7);
   background-image:
     repeating-linear-gradient(
@@ -171,13 +189,6 @@ body {
       rgba(30, 13, 7, 0.55) 19px 20px
     ),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='328' height='120'%3E%3Crect x='0' y='1' width='80' height='18' fill='%235d3f2f'/%3E%3Crect x='82' y='1' width='80' height='18' fill='%23764934'/%3E%3Crect x='164' y='1' width='80' height='18' fill='%236a402e'/%3E%3Crect x='246' y='1' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='-41' y='21' width='80' height='18' fill='%23814433'/%3E%3Crect x='41' y='21' width='80' height='18' fill='%23814433'/%3E%3Crect x='123' y='21' width='80' height='18' fill='%23684734'/%3E%3Crect x='205' y='21' width='80' height='18' fill='%23533729'/%3E%3Crect x='287' y='21' width='80' height='18' fill='%23814433'/%3E%3Crect x='0' y='41' width='80' height='18' fill='%23834a39'/%3E%3Crect x='82' y='41' width='80' height='18' fill='%23533729'/%3E%3Crect x='164' y='41' width='80' height='18' fill='%23814433'/%3E%3Crect x='246' y='41' width='80' height='18' fill='%235d3f2f'/%3E%3Crect x='-41' y='61' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='41' y='61' width='80' height='18' fill='%23764934'/%3E%3Crect x='123' y='61' width='80' height='18' fill='%23814433'/%3E%3Crect x='205' y='61' width='80' height='18' fill='%23764934'/%3E%3Crect x='287' y='61' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='0' y='81' width='80' height='18' fill='%236a402e'/%3E%3Crect x='82' y='81' width='80' height='18' fill='%23684734'/%3E%3Crect x='164' y='81' width='80' height='18' fill='%236a402e'/%3E%3Crect x='246' y='81' width='80' height='18' fill='%23814433'/%3E%3Crect x='-41' y='101' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='41' y='101' width='80' height='18' fill='%237d4e3d'/%3E%3Crect x='123' y='101' width='80' height='18' fill='%235d3f2f'/%3E%3Crect x='205' y='101' width='80' height='18' fill='%23814433'/%3E%3Crect x='287' y='101' width='80' height='18' fill='%237d4e3d'/%3E%3C/svg%3E");
-  background-attachment: fixed;
-  /* Feathers the courses into the pour at both ends. */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
-}
-@media (prefers-reduced-motion: reduce) {
-  .brick-seam::before { background-attachment: scroll; }
 }
 
 /* Mool Ghar cards run photo beside text. The photo cell carries no aspect
@@ -1220,6 +1231,9 @@ body {
 /* Post head. */
 .post-head {
   margin-top: 1rem;
+}
+.post-title-stack {
+  align-items: flex-start;
 }
 
 /* One treatment for every photo in a post — mood board, section bands and
@@ -2596,6 +2610,12 @@ body {
     left: calc(var(--c) * (100% + 2px) / 2);
     width: calc((100% - 2px) / 2);
   }
+  /* The text and its button run centred down the seam between the two
+     columns of photos, under the centred name. */
+  .post-contents-text p,
+  .post-contents-cta {
+    text-align: center;
+  }
 }
 @media (max-width: 640px) {
   /* Scales with the room between the 2rem gutters, not the whole screen,
@@ -2920,6 +2940,51 @@ body {
 @media (max-width: 640px) {
   .desktop-only {
     display: none;
+  }
+}
+
+/* On a phone everything reads centred down the page: the hero's welcome
+   and its link, each section's header, the Ghar cards and 2 cents notes,
+   and in a post the title block, the prose, the section titles and
+   captions. Rows built as two ends (a mood board's label and date, the
+   footer) keep their shape. Late in the file so it wins over the flush-left
+   prose rules above. */
+.ghar-card-meta {
+  justify-content: space-between;
+}
+.ghar-card-more {
+  align-self: flex-start;
+}
+@media (max-width: 640px) {
+  .hero-intro,
+  .section-head,
+  .ghar-card-body,
+  .twocents-note,
+  .post-head header,
+  .post-prose p,
+  .post-row > h2,
+  .post-section-title,
+  .post-band-caption,
+  .mood-caption {
+    text-align: center;
+  }
+  .hero-intro {
+    margin-inline: auto;
+  }
+  .hero-cta {
+    right: auto;
+    left: 50%;
+    translate: -50% 0;
+  }
+  .ghar-card-meta {
+    justify-content: center;
+    gap: 1.25em;
+  }
+  .ghar-card-more {
+    align-self: center;
+  }
+  .post-title-stack {
+    align-items: center;
   }
 }
 

@@ -263,6 +263,9 @@ export type BlogPost = {
        just on the left. For footage close to the band's own brown (stone,
        roofs) that otherwise vanishes under the wash. */
     seeThrough?: boolean;
+    /* Play speed, 1 by default. Below 1 stretches a quick clip into a
+       slow drift so the text over it stays easy to read. */
+    playbackRate?: number;
     /* Where the sharp copy sits on a wide screen. "left" (the default)
        puts it in the open left of the band beside the text; "right" puts
        the title and intro on the left over the blur and the footage down
@@ -295,7 +298,8 @@ export type BlogPost = {
   moodBoard: {
     image: string;
     alt: string;
-    caption: string;
+    /* Shown over the tile while it is lit; leave it out for none. */
+    caption?: string;
     /* Optional styled version shown in place of `caption`, e.g. a link. */
     captionContent?: ReactNode;
     /* Where the tile crops the photo, as a CSS object-position, for a
@@ -749,6 +753,9 @@ const FESTIVAL_CALENDAR: BlogPost = {
     alt: "A hilltop shrine under a clear blue sky, the Nepali flag and strings of prayer flags along a wooden boardwalk, snow peaks in the distance",
     // The flag, shrine and prayer flags, rather than the sky above them.
     framePosition: "50% 52%",
+    // The 8.2 s clip at a third of its speed, about 25 s a loop: too quick
+    // to read over on a phone at full speed.
+    playbackRate: 1 / 3,
   },
   sectionsLayout: "contents",
   sections: [
@@ -781,13 +788,13 @@ const FESTIVAL_CALENDAR: BlogPost = {
       // matriarch of the Shrestha household with her puja basket, Kumari
       // Puja on Ashtami and Tihar lights.
       panelGrid: [
-        { src: gharDashain, caption: "happu after his Dashain tika" },
-        { src: bsKartikThapicha, caption: "dashain with newars" },
-        { src: bsKartikMhaPuja, caption: "scene from mha: pooja" },
+        gharDashain,
+        bsKartikThapicha,
+        bsKartikMhaPuja,
         bsKartikDashainPuja, gharHimalHome, bsKartikMarigolds,
-        { src: bsKartikMatriarch, caption: "mum, head of festive operations" },
-        { src: bsKartikKumariPuja, caption: "scene from post-kumari pooja" },
-        { src: bsKartikTiharLights, caption: "tihar evenings" },
+        bsKartikMatriarch,
+        bsKartikKumariPuja,
+        bsKartikTiharLights,
       ],
       paragraphs: [
         <>
@@ -836,13 +843,13 @@ const FESTIVAL_CALENDAR: BlogPost = {
       // on the Gosaikunda trek, prayer flags and the range at Kalinchowk,
       // hooded and masked on the Everest base camp trek).
       panelGrid: [
-        { src: bsMangshirPujaSpread, caption: "wedding edition: before" },
-        { src: bsMangshirSagun, caption: "thay:bhu by festive operations head" },
-        { src: bsMangshirPujaView, caption: "wedding edition: after" },
+        bsMangshirPujaSpread,
+        bsMangshirSagun,
+        bsMangshirPujaView,
         bsMangshirWeddingBow, bsMangshirIDoCrew, bsMangshirSindoor,
-        { src: bsMangshirGosaikundaCalf, caption: "somewhere in Rasuwa" },
-        { src: bsMangshirKalinchowk, caption: "somewhere in Dolakha" },
-        { src: bsMangshirEbcMasked, caption: "somewhere in Khumbu" },
+        bsMangshirGosaikundaCalf,
+        bsMangshirKalinchowk,
+        bsMangshirEbcMasked,
       ],
       paragraphs: [
         <>
@@ -889,21 +896,20 @@ const FESTIVAL_CALENDAR: BlogPost = {
       // kitchen, a dal bhat thali, then sunbasking with Happu, Happu asleep among the
       // rooftop pots, and Happu grinning cheek to cheek under a blue sky.
       panelGrid: [
-        { src: bsPoushUltralight, caption: "pokhara activities 101" },
-        { src: bsPoushYomari, caption: "yomari punhi, obviously" },
-        { src: bsPoushPhewa, caption: "phewa lake in pokhara" },
+        bsPoushUltralight,
+        bsPoushYomari,
+        bsPoushPhewa,
         bsPoushJeri,
         // She stands at the foot of the frame, under a tall ceiling.
         { src: bsPoushSunbaskKitchen, position: "center bottom" },
         bsPoushThali,
-        { src: bsPoushHappuSunbask, caption: "winter sun, shared with happu" },
+        bsPoushHappuSunbask,
         // Happu sleeps low in a tall frame, under the pots.
         {
           src: bsPoushHappuFlowers,
           position: "center 95%",
-          caption: "perfect spot spotted",
         },
-        { src: bsPoushHappuAndNush, caption: "winter sun, shared with happu" },
+        bsPoushHappuAndNush,
       ],
       paragraphs: [
         <>
@@ -958,28 +964,24 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsMaghShrine,
           position: "center 15%",
-          caption: "mum and god, catching up",
         },
         {
           src: bsMaghChakuBite,
           position: "center 35%",
-          caption: "maghe sankranti",
         },
         {
           src: bsMaghRiverDip,
           position: "center 30%",
-          caption: "Sankhu, Sali river visit",
         },
         bsMaghSagunBowl, bsMaghTempleMum, bsMaghButterLamps,
         // High enough for the page's illustrated heading and the diyo.
         {
           src: bsMaghSwasthani,
           position: "center 28%",
-          caption: "swasthani story time",
         },
         // Two laddus stacked: no crop of a wide cell holds both.
-        { src: bsMaghLaddus, whole: true, caption: "sankranti ladoo, in all sizes" },
-        { src: bsMaghTribeni, caption: "somewhere in tribeni" },
+        { src: bsMaghLaddus, whole: true },
+        bsMaghTribeni,
       ],
       paragraphs: [
         <>
@@ -1031,33 +1033,28 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsFalgunRooftopCafe,
           position: "30% center",
-          caption: "shivaratri, soul's flying",
         },
         {
           src: bsFalgunDiyo,
           position: "center 62%",
-          caption: "a diyo for the darkest night",
         },
         // Toward the faces on the right, for a phone's narrow cell.
         {
           src: bsFalgunSparklers,
           position: "60% center",
-          caption: "shivaratri, sparks flying",
         },
         bsFalgunAarti2, bsFalgunAarti1, bsFalgunAarti3,
-        { src: bsFalgunSweetsBox, caption: "dessert #1" },
+        bsFalgunSweetsBox,
         // Low enough in the alley for the sweet shop's sign.
         {
           src: bsFalgunMangalbazarAlley,
           position: "center 72%",
-          caption: "alleys of mangalbazar",
         },
         // Near the foot, so the two sweets sit above this cell's sticker,
         // which rides high to clear the close triangle.
         {
           src: bsFalgunRasbari,
           position: "center 90%",
-          caption: "dessert #2",
         },
       ],
       paragraphs: [
@@ -1109,44 +1106,27 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsChaitraHoliYellow,
           position: "center 20%",
-          caption: "holi, yellow edition",
         },
         // Cut from Baa's head down to the puja, and shown whole: no crop of
         // a wide cell holds both. The puja runs to the foot of the frame and
-        // Baa's face is top left, so the caption goes top right, over the
-        // helmet, on two lines to keep clear of him.
+        // Baa's face is top left.
         {
           src: bsChaitraRamNavami,
           whole: true,
-          caption: (
-            <>
-              ram navami,
-              <br />
-              marigold ready
-            </>
-          ),
-          captionTopRight: true,
         },
         {
           src: bsChaitraHoliBlue,
           position: "center 25%",
-          caption: "holi, blue edition",
         },
         bsChaitraSamayBaji, bsChaitraYomariPlate, bsChaitraLeafPlate,
         {
           src: bsChaitraBrassLamps,
           position: "center 55%",
-          caption: "preparations for jatra",
         },
-        // The file is cut so the offering sits above the caption.
-        {
-          src: bsChaitraMandalaOffering,
-          caption: 'pikhalakhu, as is from "mool ghar"',
-        },
+        bsChaitraMandalaOffering,
         {
           src: bsChaitraSanoDashain,
           position: "center 55%",
-          caption: "chaite dashain at mool ghar",
         },
       ],
       paragraphs: [
@@ -1193,23 +1173,21 @@ const FESTIVAL_CALENDAR: BlogPost = {
       // tattoos of a temple window and peacocks, and anklets for Mata
       // Tirtha Aunsi.
       panelGrid: [
-        { src: bsBaisakhRooftopTerrace, caption: "rooftop season, in bloom" },
+        bsBaisakhRooftopTerrace,
         // Low enough for the chariot's face and the diyos below it.
         {
           src: bsBaisakhJatraNight,
           position: "center 60%",
-          caption: "jatra night, diyos lit",
         },
-        { src: bsBaisakhPatanSquare, caption: "a quiet square in patan" },
+        bsBaisakhPatanSquare,
         bsBaisakhGreenHills, bsBaisakhFeetUp, bsBaisakhPineForest,
         // High, for the hat and both faces.
         {
           src: bsBaisakhStreetLaugh,
           position: "center 20%",
-          caption: "hat on, giggles out",
         },
-        { src: bsBaisakhNewarTattoo, caption: "inked like a temple window" },
-        { src: bsBaisakhAnklets, caption: "mother's day in may" },
+        bsBaisakhNewarTattoo,
+        bsBaisakhAnklets,
       ],
       paragraphs: [
         <>
@@ -1262,26 +1240,21 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsJesthaYak,
           position: "center 58%",
-          caption: "yak traffic, khumbu edition",
         },
-        { src: bsJesthaCairns, caption: "stacked for luck" },
-        {
-          src: bsJesthaPorterTrail,
-          caption: "somewhere on the way to namche",
-        },
+        bsJesthaCairns,
+        bsJesthaPorterTrail,
         bsJesthaTrekMap,
         // Wide frames: toward the trekkers and the peaks, and toward the two
         // resting at the top.
         { src: bsJesthaChortenTrail, position: "68% center" },
         { src: bsJesthaSummitRest, position: "35% center" },
-        { src: bsJesthaNamche, caption: "namche, first light" },
+        bsJesthaNamche,
         // Up a little for more of the peak.
         {
           src: bsJesthaAmaDablamRiver,
           position: "center 35%",
-          caption: "ama dablam, showing off",
         },
-        { src: bsJesthaAmaDablamDawn, caption: "dawn, then the climb" },
+        bsJesthaAmaDablamDawn,
       ],
       paragraphs: [
         <>
@@ -1333,13 +1306,11 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsAsarHappuRooftop,
           position: "58% center",
-          caption: "happu, on cloud watch",
         },
-        { src: bsAsarCafeWindow, caption: "rainy day, window seat" },
+        bsAsarCafeWindow,
         {
           src: bsAsarHappuGlance,
           position: "66% center",
-          caption: "grey skies, white floof",
         },
         bsAsarMudShout, bsAsarMudWade, bsAsarMudCheer,
         // Low enough for her face, which sits under the stupa's eyes in
@@ -1347,18 +1318,15 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsAsarSwayambhuLaugh,
           position: "center 62%",
-          caption: "monsoon giggles",
         },
         // The stupa's eyes and the top of its dome.
         {
           src: bsAsarSwayambhuDome,
           position: "center 30%",
-          caption: "swayambhu, flags flying",
         },
         {
           src: bsAsarSwayambhuCalm,
           position: "center 66%",
-          caption: "okay, serious face now",
         },
       ],
       paragraphs: [
@@ -1409,19 +1377,17 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsShrawanHappuMango,
           position: "center 30%",
-          caption: "mango season, happu on duty",
         },
         // Low, for the Buddha at the foot of the frame.
         {
           src: bsShrawanSwayambhuBuddha,
           position: "center 85%",
-          caption: "buddha, minding the monsoon",
         },
-        { src: bsShrawanRedBangles, caption: "shrawan bangles, red edition" },
+        bsShrawanRedBangles,
         bsShrawanCafeButterflies, bsShrawanPuff, bsShrawanOfficeWindow,
-        { src: bsShrawanCurtainWindow, caption: "curtains open, rain on hold" },
-        { src: bsShrawanSkyBird, caption: "a break in the clouds" },
-        { src: bsShrawanPoppyCurtain, caption: "afternoon nap lighting" },
+        bsShrawanCurtainWindow,
+        bsShrawanSkyBird,
+        bsShrawanPoppyCurtain,
       ],
       paragraphs: [
         <>
@@ -1473,7 +1439,6 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsBhadauPatanLions,
           position: "30% center",
-          caption: "by the lions, pigeons on duty",
           video: bsBhadauPatanLoop,
         },
         // High, so her face sits below the month's name, which is centred
@@ -1481,26 +1446,20 @@ const FESTIVAL_CALENDAR: BlogPost = {
         {
           src: bsBhadauPatanDog,
           position: "center 30%",
-          caption: "made a friend in the square",
         },
         // She sits at the right edge of a wide frame.
         {
           src: bsBhadauPatanPagoda,
           position: "100% center",
-          caption: "home turf, golden hour",
         },
         bsBhadauGhatNight1, bsBhadauGhatNight2, bsBhadauGhatNight3,
-        { src: bsBhadauGosaikundaBeanie, caption: "gosaikunda, pom-pom approved" },
+        bsBhadauGosaikundaBeanie,
         // High, for her raised hand and the snowy peak behind it.
         {
           src: bsBhadauGosaikundaOffering,
           position: "center 20%",
-          caption: "hello from 4,380m",
         },
-        {
-          src: bsBhadauGosaikundaBreakfast,
-          caption: "breakfast, lake view included",
-        },
+        bsBhadauGosaikundaBreakfast,
       ],
       paragraphs: [
         <>
@@ -1547,17 +1506,16 @@ const FESTIVAL_CALENDAR: BlogPost = {
       // under a tangle of wires as the skies clear; then butter lamps, paan
       // with Baba before work, and a puja spread.
       panelGrid: [
-        { src: gharBahra, caption: "father's day, throwback edition" },
-        { src: bsAsojFeetBaa, caption: "two generations, same rug" },
-        { src: gharIhi, caption: "baba's girl, ihi day" },
+        gharBahra,
+        bsAsojFeetBaa,
+        gharIhi,
         bsAsojStreetGlance, bsAsojStreetStride, bsAsojStreetPause,
-        { src: bsAsojButterLamps, caption: "lamps lit, wishes sent" },
-        { src: bsAsojPaan, caption: "paan o'clock with baba" },
+        bsAsojButterLamps,
+        bsAsojPaan,
         // Low, for the rose and the hydrangea at the foot of the frame.
         {
           src: bsAsojPujaSpread,
           position: "center 85%",
-          caption: "puja plates, fully loaded",
         },
       ],
       paragraphs: [
@@ -1618,85 +1576,63 @@ const FESTIVAL_CALENDAR: BlogPost = {
       image: gharDashain,
       alt: "A dog on a balcony wearing tika and a marigold garland",
       position: "center 30%",
-      caption: "post-dashain tika click",
       month: { ne: "कार्तिक", en: "Kartik" },
     },
     {
       image: bsMangshir,
       alt: "Arm raised in a peace sign on a boulder below snow-dusted Himalayan peaks",
       position: "center 74%",
-      caption: "scene from EBC trek",
       month: { ne: "मंसिर", en: "Mangshir" },
     },
     {
       image: bsPoush,
       alt: "A plate of glossy jeri piled on swari",
-      caption: "jerii swari in da house",
       month: { ne: "पुष", en: "Puush" },
     },
     {
       image: bsMagh,
       alt: "An open Swasthani Brata Katha beside a brass plate and an oil lamp",
-      caption: "कुमारजी आज्ञा गर्नुहुन्छ, हे अगस्त्य मुनि",
-      // Devanagari sets larger than Outfit at the same size; a notch down
-      // matches the other captions and keeps it under the month's name.
-      // Two lines, broken at the comma.
-      captionContent: (
-        <span style={{ fontSize: "0.9em" }}>
-          {ne("कुमारजी आज्ञा गर्नुहुन्छ,")}
-          <br />
-          {ne("हे अगस्त्य मुनि")}
-        </span>
-      ),
       month: { ne: "माघ", en: "Magh" },
     },
     {
       image: bsFalgun,
       alt: "A priest swinging a blazing fire lamp at a night aarti before a crowd",
-      caption: "Jai shambo, take a puff",
       month: { ne: "फागुन", en: "Falgun" },
     },
     {
       image: bsChaitra,
       alt: "A face and shirt covered in yellow and pink Holi colour",
-      caption: "Holi is here",
       month: { ne: "चैत", en: "Chaith" },
     },
     {
       image: bsBaisakh,
       alt: "Four women with red tika on their foreheads, seated behind a cake",
-      caption: "tika first, then cake",
       month: { ne: "बैशाख", en: "Baisakh" },
     },
     {
       image: bsJestha,
       alt: "Standing in a wide-brimmed hat with a walking stick above misty green hills",
       position: "0% center",
-      caption: "hat on, stick found, view earned",
       month: { ne: "जेठ", en: "Jeth" },
     },
     {
       image: gharPatanAerial,
       alt: "Patan Durbar Square from above under a heavy grey sky",
-      caption: "the rain is on its way",
       month: { ne: "असार", en: "Asar" },
     },
     {
       image: bsAshad,
       alt: "Leaning on a rooftop railing in Kathmandu as monsoon clouds gather over the hills",
-      caption: "grey skies, kheer on the stove",
       month: { ne: "साउन", en: "Shrawan" },
     },
     {
       image: gharGosaikunda,
       alt: "Sitting at the edge of a still alpine lake in the mountains",
-      caption: "a long walk up for a thread",
       month: { ne: "भदौ", en: "Bhadau" },
     },
     {
       image: moodPujaMarigold,
       alt: "Marigolds, diyo, sindoor and incense laid out on brick",
-      caption: "the marigolds are back",
       month: { ne: "असोज", en: "Asoj" },
     },
   ],

@@ -175,11 +175,11 @@ function SectionContents({
   body,
   open,
   setOpen,
+  /* Which section is open, kept by the page so the rest of it can
+     answer to it. */
 }: {
   sections: BlogSection[]
   body: React.CSSProperties
-  /* Which section is open, kept by the page so the rest of it can
-     answer to it. */
   open: number | null
   setOpen: (i: number | null) => void
 }) {
@@ -187,8 +187,7 @@ function SectionContents({
   const panelHeading = useRef<HTMLHeadingElement>(null)
   const rows = useRef<(HTMLButtonElement | null)[]>([])
   const last = useRef<number | null>(null)
-  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)")
-    .matches
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
   useEffect(() => {
     if (open === null) {
@@ -265,13 +264,10 @@ function SectionContents({
               onClick={() => setOpen(i)}
             >
               <span className="post-contents-name">{s.heading}</span>
-              <span className="post-contents-caption">
-                {s.image?.caption}
-              </span>
+              <span className="post-contents-caption">{s.image?.caption}</span>
               {s.season && (
                 <span className="post-contents-season">
-                  {s.season.en}:{" "}
-                  <span lang="ne">{s.season.ne}</span>
+                  {s.season.en}: <span lang="ne">{s.season.ne}</span>
                 </span>
               )}
               <svg
@@ -296,10 +292,10 @@ function SectionContents({
           aria-labelledby="post-contents-panel-heading"
           style={
             section.image && !section.panelGrid
-              ? ({
+              ? {
                   "--band-image": `url(${section.image.src})`,
                   "--band-position": section.image.position ?? "center",
-                } as React.CSSProperties)
+                } as React.CSSProperties
               : undefined
           }
           onKeyDown={(e) => {
@@ -311,69 +307,74 @@ function SectionContents({
               grid, so the text's row of photos grows with the text. */}
           {grid
             ?.slice(0, 9)
-            .map(({ src, caption, captionTopRight, position, whole, video }, k) => (
-              <div
-                key={k}
-                className={`post-contents-cell post-contents-cell--wide post-contents-cell--row${
-                  Math.floor(k / 3) + 1
-                }`}
-                onMouseEnter={video ? playCellVideo : undefined}
-                onMouseLeave={video ? stopCellVideo : undefined}
-                style={
-                  {
-                    gridRow: Math.floor(k / 3) + 1,
-                    gridColumn: (k % 3) + 1,
-                    // Row and column from 0, for the phone layout.
-                    "--r": Math.floor(k / 3),
-                    "--c": k % 3,
-                  } as React.CSSProperties
-                }
-                aria-hidden="true"
-              >
-                {whole && (
+            .map(
+              (
+                { src, caption, captionTopRight, position, whole, video },
+                k,
+              ) => (
+                <div
+                  key={k}
+                  className={`post-contents-cell post-contents-cell--wide post-contents-cell--row${
+                    Math.floor(k / 3) + 1
+                  }`}
+                  onMouseEnter={video ? playCellVideo : undefined}
+                  onMouseLeave={video ? stopCellVideo : undefined}
+                  style={
+                    {
+                      gridRow: Math.floor(k / 3) + 1,
+                      gridColumn: (k % 3) + 1,
+                      // Row and column from 0, for the phone layout.
+                      "--r": Math.floor(k / 3),
+                      "--c": k % 3,
+                    } as React.CSSProperties
+                  }
+                  aria-hidden="true"
+                >
+                  {whole && (
+                    <img
+                      className="post-contents-cell-fill"
+                      src={src}
+                      alt=""
+                      loading="lazy"
+                    />
+                  )}
                   <img
-                    className="post-contents-cell-fill"
                     src={src}
                     alt=""
                     loading="lazy"
+                    style={{
+                      objectPosition: position,
+                      objectFit: whole ? "contain" : undefined,
+                    }}
                   />
-                )}
-                <img
-                  src={src}
-                  alt=""
-                  loading="lazy"
-                  style={{
-                    objectPosition: position,
-                    objectFit: whole ? "contain" : undefined,
-                  }}
-                />
-                {video && (
-                  <video
-                    className="post-contents-cell-video"
-                    src={video}
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    style={{ objectPosition: position }}
-                    onPlaying={(e) =>
-                      e.currentTarget.classList.add("is-playing")
-                    }
-                  />
-                )}
-                {caption && (
-                  <span
-                    className={`post-contents-sticker${
-                      captionTopRight
-                        ? " post-contents-sticker--top-right"
-                        : ""
-                    }`}
-                  >
-                    {caption}
-                  </span>
-                )}
-              </div>
-            ))}
+                  {video && (
+                    <video
+                      className="post-contents-cell-video"
+                      src={video}
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      style={{ objectPosition: position }}
+                      onPlaying={(e) =>
+                        e.currentTarget.classList.add("is-playing")
+                      }
+                    />
+                  )}
+                  {caption && (
+                    <span
+                      className={`post-contents-sticker${
+                        captionTopRight
+                          ? " post-contents-sticker--top-right"
+                          : ""
+                      }`}
+                    >
+                      {caption}
+                    </span>
+                  )}
+                </div>
+              ),
+            )}
           {/* A phone's own set, 3 rows of 2. Lazy, so whichever set is
               hidden on this screen never loads. */}
           {phoneGrid?.slice(0, 6).map((src, k) => (
@@ -523,6 +524,13 @@ export default function BlogPage({ post }: { post: BlogPost }) {
       preload="metadata"
       poster={post.introVideo!.poster}
       aria-hidden="true"
+      // There is no attribute for speed, and loading resets it, so set it
+      // once the clip is ready.
+      onLoadedMetadata={(e) => {
+        const rate = post.introVideo!.playbackRate ?? 1
+        e.currentTarget.defaultPlaybackRate = rate
+        e.currentTarget.playbackRate = rate
+      }}
     >
       <source src={post.introVideo!.src} type="video/mp4" />
     </video>
@@ -550,10 +558,10 @@ export default function BlogPage({ post }: { post: BlogPost }) {
       <div className="post-row post-head">
         <header style={{ minWidth: 0 }}>
           <h1
+            className="post-title-stack"
             style={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start",
               gap: "0.2rem",
               margin: 0,
               fontWeight: 400,
@@ -614,9 +622,9 @@ export default function BlogPage({ post }: { post: BlogPost }) {
           }
           style={
             post.music.backdrop
-              ? ({
+              ? {
                   "--music-image": `url(${post.music.backdrop})`,
-                } as React.CSSProperties)
+                } as React.CSSProperties
               : undefined
           }
           href={`https://www.youtube.com/watch?v=${post.music.youtube}`}
@@ -631,9 +639,12 @@ export default function BlogPage({ post }: { post: BlogPost }) {
                 <i />
                 <i />
               </span>
-              <span className="post-music-label-rest">Listen while you read</span>
+              <span className="post-music-label-rest">
+                Listen while you read
+              </span>
               <span className="post-music-tip" aria-hidden="true">
-                YouTube Premium: divine moments deserve uninterrupted listening 😉
+                YouTube Premium: divine moments deserve uninterrupted listening
+                😉
               </span>
             </span>
             <span className="post-music-line">
@@ -688,6 +699,7 @@ export default function BlogPage({ post }: { post: BlogPost }) {
 
   return (
     <article
+      data-post={post.slug}
       style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 2rem 6rem" }}
     >
       {post.introVideo ? (
@@ -698,13 +710,15 @@ export default function BlogPage({ post }: { post: BlogPost }) {
           className={`post-band post-band--top${
             post.introVideo.seeThrough ? " post-band--see-through" : ""
           }${
-            post.introVideo.frameSide === "right" ? " post-band--frame-right" : ""
+            post.introVideo.frameSide === "right"
+              ? " post-band--frame-right"
+              : ""
           }${clipInHead ? " post-band--frame-center" : ""}`}
           style={
             post.introVideo.framePosition
-              ? ({
+              ? {
                   "--frame-position": post.introVideo.framePosition,
-                } as React.CSSProperties)
+                } as React.CSSProperties
               : undefined
           }
         >
@@ -767,7 +781,10 @@ export default function BlogPage({ post }: { post: BlogPost }) {
                 <span className="sr-only">
                   Photos: {left.alt}; {section.image.alt}; {right.alt}
                 </span>
-                <div className="post-tri-panel post-tri-side" style={photo(left)}>
+                <div
+                  className="post-tri-panel post-tri-side"
+                  style={photo(left)}
+                >
                   {heading}
                 </div>
                 <div
@@ -896,7 +913,7 @@ export default function BlogPage({ post }: { post: BlogPost }) {
           }
           style={
             post.moodBoardColumns
-              ? ({ "--cols": post.moodBoardColumns } as React.CSSProperties)
+              ? { "--cols": post.moodBoardColumns } as React.CSSProperties
               : undefined
           }
         >
@@ -965,28 +982,31 @@ export default function BlogPage({ post }: { post: BlogPost }) {
                   </span>
                 </span>
               )}
-              <div
-                className="mood-caption"
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  padding: "1.4rem 0.85rem 0.75rem",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "0.75rem",
-                  lineHeight: 1.35,
-                  color: "var(--color-cream)",
-                  textShadow: "0 1px 6px rgba(var(--shade), 0.9)",
-                  background:
-                    "linear-gradient(180deg, rgba(var(--shade), 0) 0%, rgba(var(--shade), 0.78) 60%, rgba(var(--shade), 0.92) 100%)",
-                  opacity: lit === i ? 1 : 0,
-                  transform: lit === i ? "translateY(0)" : "translateY(0.5rem)",
-                  pointerEvents: lit === i ? "auto" : "none",
-                }}
-              >
-                {item.captionContent ?? item.caption}
-              </div>
+              {(item.captionContent ?? item.caption) && (
+                <div
+                  className="mood-caption"
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    padding: "1.4rem 0.85rem 0.75rem",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "0.75rem",
+                    lineHeight: 1.35,
+                    color: "var(--color-cream)",
+                    textShadow: "0 1px 6px rgba(var(--shade), 0.9)",
+                    background:
+                      "linear-gradient(180deg, rgba(var(--shade), 0) 0%, rgba(var(--shade), 0.78) 60%, rgba(var(--shade), 0.92) 100%)",
+                    opacity: lit === i ? 1 : 0,
+                    transform:
+                      lit === i ? "translateY(0)" : "translateY(0.5rem)",
+                    pointerEvents: lit === i ? "auto" : "none",
+                  }}
+                >
+                  {item.captionContent ?? item.caption}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -1001,7 +1021,6 @@ export default function BlogPage({ post }: { post: BlogPost }) {
         )}
         {noteLast && <div style={{ marginTop: "3rem" }}>{note}</div>}
       </section>
-
     </article>
   )
 }

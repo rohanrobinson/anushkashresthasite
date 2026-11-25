@@ -665,6 +665,7 @@ function Hero() {
         </h1>
 
         <p
+          className="hero-intro"
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "1rem",
@@ -768,6 +769,7 @@ function TwoCents() {
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2rem" }}>
         {/* Header */}
         <div
+          className="section-head"
           style={{
             marginBottom: "3rem",
             paddingBottom: "2rem",
@@ -965,6 +967,7 @@ function Ghar() {
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2rem" }}>
         {/* Header */}
         <div
+          className="section-head"
           style={{
             marginBottom: "4rem",
             paddingBottom: "2rem",
@@ -1089,9 +1092,9 @@ function Ghar() {
                 }}
               >
                 <div
+                  className="ghar-card-meta"
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
                     marginBottom: "1rem",
                   }}
@@ -1160,6 +1163,7 @@ function Ghar() {
                     rel="noopener noreferrer"
                     // The card would open a second tab otherwise.
                     onClick={(e) => e.stopPropagation()}
+                    className="ghar-card-more"
                     style={{
                       fontFamily: "var(--font-body)",
                       fontSize: "0.8125rem",
@@ -1170,7 +1174,6 @@ function Ghar() {
                       letterSpacing: "0.04em",
                       textDecoration: "none",
                       transition: "color 0.2s ease",
-                      alignSelf: "flex-start",
                     }}
                   >
                     Read more →
@@ -1466,8 +1469,93 @@ const SOCIALS = [
 // A course of telia itta laid between two sections. It takes the colour of the
 // section above and the one below, so each seam is literally where those two
 // grounds meet rather than a hard line between them.
+//
+// The wall moves two ways at once. Vertically the courses hold still while
+// the band scrolls over them: the courses layer is shifted by the band's own
+// scroll offset, wrapped to one repeat of the pattern (BRICK_REPEAT px), so it
+// reads as pinned to the screen in every browser (`background-attachment:
+// fixed` did this before, but iOS Safari ignores it). Sideways, every course
+// slides, neighbours in opposite directions: a slow drift all the time, pushed
+// faster by however far the page scrolls.
+const BRICK_REPEAT = 120
+const BRICK_COURSE = 20
+const BRICK_WIDTH = 328
+// Enough courses for the tallest band (14rem) plus one repeat of headroom.
+const BRICK_COURSES = 20
+// Sideways drift in px per second, extra px of slide per px scrolled, and a
+// ceiling on that extra per frame so a long jump (a nav link) doesn't whip
+// the wall round.
+const BRICK_DRIFT = 14
+const BRICK_SCROLL_PUSH = 0.5
+const BRICK_PUSH_MAX = 6
+
 function BrickSeam() {
-  return <div className="brick-seam" aria-hidden="true" />
+  const seamRef = useRef<HTMLDivElement>(null)
+  const coursesRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const seam = seamRef.current
+    const courses = coursesRef.current
+    if (!seam || !courses) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+
+    const rows = Array.from(courses.children) as HTMLElement[]
+    let slide = 0
+    let lastTime = performance.now()
+    let lastScroll = window.scrollY
+    let frame = 0
+
+    const step = (now: number) => {
+      const dt = Math.min((now - lastTime) / 1000, 0.1)
+      lastTime = now
+      const push = Math.abs(window.scrollY - lastScroll) * BRICK_SCROLL_PUSH
+      slide += BRICK_DRIFT * dt + Math.min(push, BRICK_PUSH_MAX)
+      lastScroll = window.scrollY
+      const x = slide % BRICK_WIDTH
+
+      const top = seam.getBoundingClientRect().top
+      const shift = ((top % BRICK_REPEAT) + BRICK_REPEAT) % BRICK_REPEAT
+      courses.style.transform = `translate3d(0, ${-shift}px, 0)`
+      rows.forEach((row, i) => {
+        row.style.transform = `translate3d(${i % 2 ? x : -x}px, 0, 0)`
+      })
+      frame = requestAnimationFrame(step)
+    }
+
+    // Only run while the band is on screen.
+    const watcher = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !frame) {
+        lastTime = performance.now()
+        lastScroll = window.scrollY
+        frame = requestAnimationFrame(step)
+      } else if (!entry.isIntersecting && frame) {
+        cancelAnimationFrame(frame)
+        frame = 0
+      }
+    })
+    watcher.observe(seam)
+    return () => {
+      watcher.disconnect()
+      cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  return (
+    <div ref={seamRef} className="brick-seam" aria-hidden="true">
+      <div ref={coursesRef} className="brick-seam-courses">
+        {Array.from({ length: BRICK_COURSES }, (_, i) => (
+          <div
+            key={i}
+            className="brick-seam-course"
+            style={{
+              top: i * BRICK_COURSE,
+              backgroundPosition: `0 0, 0 ${-((i * BRICK_COURSE) % BRICK_REPEAT)}px`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function Socials() {
