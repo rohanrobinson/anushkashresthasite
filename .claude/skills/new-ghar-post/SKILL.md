@@ -17,7 +17,7 @@ specific and personal, so ask for the words rather than inventing them — see
 
 ## The four places a post lives
 
-1. `src/assets/ghar/` (or `src/assets/mood/`) — the image files.
+1. `src/assets/in-use/<post-name>/` — the image files, one flat folder per post.
 2. `src/blogPosts.tsx` — image imports at the top, then a `const MY_POST: BlogPost = {...}`.
 3. `src/blogPosts.tsx` bottom — the slug added to `export const BLOG_POSTS`.
    Without this `getPost` returns undefined and the URL falls back to the front page.
@@ -69,11 +69,15 @@ paragraphs out of it yourself and only ask about what the draft does not cover
 
 ## Images
 
-Put new files under `src/assets/ghar/` with descriptive kebab-case names
-(`mool-ghar-facade.jpg`), import them at the top of `src/blogPosts.tsx`, and
-name the binding by area and subject: `gharFacade`, `moodPujaMarigold`. Reusing
-an already-imported image across posts is normal and fine — check the existing
-imports before asking the user for a new photo.
+Put new files in a flat folder named for the post, `src/assets/in-use/<post-name>/`
+(alongside `landing-page/`, `mool-ghar/` and `bikram-sambat/`), with descriptive
+kebab-case names (`mool-ghar-facade.jpg`), import them at the top of
+`src/blogPosts.tsx`, and name the binding by area and subject: `gharFacade`,
+`moodPujaMarigold`. Reusing an already-imported image across posts is normal
+and fine — check the existing imports before asking the user for a new photo.
+An image shown on more than one page lives in `src/assets/in-use/shared/`, so
+when you reuse one from another page's folder, move it there and update every
+import. Files the site no longer shows go to `src/assets/not-in-use/`.
 
 Two shapes, and they differ:
 

@@ -16,6 +16,6 @@ logs/
 .DS_Store
 
 # Source footage, too large for GitHub. The site uses the trimmed painting.mp4.
-src/assets/hero/painting.mov
-src/assets/hero/Bikram-Sambat-cover.MOV
-src/assets/hero/Bhadau 1.MOV
+src/assets/not-in-use/hero/painting.mov
+src/assets/not-in-use/hero/Bikram-Sambat-cover.MOV
+src/assets/not-in-use/hero/Bhadau 1.MOV

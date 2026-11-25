@@ -6,7 +6,7 @@
 // 1. At the top of src/blogPosts.tsx, beside the existing imports.
 //    Name the binding by area + subject so the list stays scannable.
 // ---------------------------------------------------------------------------
-import gharNewPhoto from "./assets/ghar/new-photo.jpg"
+import gharNewPhoto from "./assets/in-use/new-post/new-photo.jpg"
 
 // ---------------------------------------------------------------------------
 // 2. The post object. Place it after the last existing post, before the
